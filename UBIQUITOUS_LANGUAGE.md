@@ -20,11 +20,13 @@ Stefano Igbinosun & Jarne Losschaert
 | **Slide (Sheet)** |  | A visual sheet projected and visible to the audience during a presentation. |
 |  | _Title Slide_ | The first slide of a slide show, showing the title and meta information of the slide show. |
 |  | _Ordinary Slide_ | A slide containing a title and one or more items. |
-|  | _Special Slide_ | A slide with that differs from ordinary slides (e.g. Table of Contents). |
+|  | _Table of Contents Slide_ | A slide that lists the subjects of the following slides in a structured manner. |
+|  | _Special Slide_ | A slide with that differs from ordinary slides (e.g. diagrams, graphs, templates). |
 | **Meta Information** |  | Information about the slide show displayed on slides. |
 |  | _Slide Number_ | The position of a slide within the slide show sequence. |
 |  | _Total Slides_ | The total number of slides in the slide show. |
 |  | _Slide Show Title_ | The title of the slide show as shown on the title slide. |
+|  | _Subject_ | The main topic or theme of a slide. |
 |  | _Presenter Name_ | The name of the person presenting the slide show. |
 |  | _Date_ | The date associated with the slide show. |
 | **Item** |  | A content element shown on a slide. |
@@ -50,6 +52,8 @@ Stefano Igbinosun & Jarne Losschaert
 - An Ordinary Slide contains a Title and one or more Items.
 - A Text Item has a Level.
 - Meta Information may appear on slides.
+- Every slide shows the subject of the slide.
+- A Table of Contents Slide lists the subjects of the following slides in a structured manner.
 
 ---
 
@@ -76,7 +80,7 @@ Stefano Igbinosun & Jarne Losschaert
 | Start Slide Show | Begin presenting the first slide. |
 | Show Next Slide | Move to the next slide in the sequence. |
 | Show Previous Slide | Return to the previous slide. |
-| Go To Slide | Go to a specific slide by number. |
+| Go To Slide (optional) | Go to a specific slide by number. |
 | End Slide Show | Stop presenting the slide show. |
 
 ---
@@ -88,6 +92,8 @@ Stefano Igbinosun & Jarne Losschaert
 | Title Slide Rule | The title slide is always the first slide in the sequence. |
 | Slide Number Rule | Each slide has a unique number within the slide show. |
 | Sequence Rule | Slides are presented in a fixed order. |
+| Subject Rule | Every slide must have a subject that is displayed on the slide. |
+| Table of Contents Rule | A table of contents slide lists the subjects of the following slides in a structured manner. |
 
 ---
 
