@@ -17,10 +17,11 @@ Stefano Igbinosun & Jarne Losschaert
 |  | _Audience_ | The group of people attending the presentation. |
 | **Slide Show** |  | An ordered sequence of slides presented to an audience. |
 |  | _Sequence_ | The fixed order in which slides are presented. |
+|  | _Subject Block_ | A contiguous sequence of slides sharing the same subject. |
 | **Slide (Sheet)** |  | A visual sheet projected and visible to the audience during a presentation. |
 |  | _Title Slide_ | The first slide of a slide show, showing the title and meta information of the slide show. |
 |  | _Ordinary Slide_ | A slide containing a title and one or more items. |
-|  | _Table of Contents Slide_ | A slide that lists the subjects of the following slides in a structured manner. |
+|  | _Table of Contents Slide_ | A slide that lists the subject blocks in a structured manner. |
 |  | _Special Slide_ | A slide with that differs from ordinary slides (e.g. diagrams, graphs, templates). |
 | **Meta Information** |  | Information about the slide show displayed on slides. |
 |  | _Slide Number_ | The position of a slide within the slide show sequence. |
@@ -53,7 +54,7 @@ Stefano Igbinosun & Jarne Losschaert
 - A Text Item has a Level.
 - Meta Information may appear on slides.
 - Every slide shows the subject of the slide.
-- A Table of Contents Slide lists the subjects of the following slides in a structured manner.
+- A Table of Contents Slide lists the subject blocks of the following slides in a structured manner.
 
 ---
 
@@ -93,7 +94,10 @@ Stefano Igbinosun & Jarne Losschaert
 | Slide Number Rule | Each slide has a unique number within the slide show. |
 | Sequence Rule | Slides are presented in a fixed order. |
 | Subject Rule | Every slide must have a subject that is displayed on the slide. |
-| Table of Contents Rule | A table of contents slide lists the subjects of the following slides in a structured manner. |
+| Table of Contents Rule | A table of contents slide lists the subject blocks in a structured manner. |
+| Consecutive Subject Rule | Consecutive slides with the same subject are grouped into a single subject block for the table of contents. |
+| Repeated Subject Rule | If a subject reappears after an interruption by a different subject, it is listed again in the table of contents. |
+| Missing Subject Rule | If a slide does not have a subject, it is categorized under a default subject (e.g., "Onbekend onderwerp") in the table of contents. |
 
 ---
 
