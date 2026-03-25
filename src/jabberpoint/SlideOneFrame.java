@@ -31,7 +31,7 @@ public class SlideOneFrame extends JFrame {
 
         //add(new JLabel("This is Slide One.", SwingConstants.BOTTOM), BorderLayout.SOUTH);
         JLabel label = new JLabel("Slide One - Press UP to go back", SwingConstants.CENTER);
-        add(label, BorderLayout.CENTER);
+        add(label, BorderLayout.SOUTH);
 
         setupKeyBindings();
     }

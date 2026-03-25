@@ -32,7 +32,7 @@ public class StartupFrame extends JFrame {
 		// position of label to press key Down
 		//add(new JLabel("JabberPoint startup is running.",SwingConstants.CENTER),BorderLayout.SOUTH);
 		JLabel label = new JLabel("Startup Frame - Press DOWN", SwingConstants.CENTER);
-        add(label, BorderLayout.CENTER);
+        add(label, BorderLayout.SOUTH);
 		
 		setupKeyBindings();
 	}
