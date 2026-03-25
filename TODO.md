@@ -58,7 +58,7 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 - Oorspronkelijk ontwerp in appendix.
 - Duidelijke diff: wat is aangepast en wat bleef gelijk.
 
-## Fase 3 - Architectuur en lagen neerzetten
+## Fase 3 - Architectuur en lagen neerzetten - Check (code, zonder verslag)
 
 8. Onion-architectuur structureren
 - Domain laag: entiteiten, value objects, domeinservices, interfaces.
