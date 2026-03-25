@@ -10,7 +10,7 @@ public final class App {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			StartupFrame frame = new StartupFrame();
-			frame.setVisible(true);
+			frame.setVisible(true);		
 		});
 	}
 }
