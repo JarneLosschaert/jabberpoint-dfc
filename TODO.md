@@ -2,7 +2,7 @@
 
 Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 
-## Fase 0 - Basis en afbakening
+## Fase 0 - Basis en afbakening - Check
 
 1. Bevestig scope met team
 - Extra feature: automatische inhoudsopgave-slides op plekken waar `toc` voorkomt.
@@ -13,17 +13,21 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 2. Beslis en documenteer ontwerpkeuzes
 - Wat als slide geen `subject` heeft?
   - Keuze vastleggen: fallback naar titel of expliciet "Onbekend onderwerp".
+  - Kueze: direct "Onbekend onderwerp" tonen als `subject` ontbreekt. Optioneel later uitbreiden met fallback naar titel als `subject` ontbreekt maar titel wel aanwezig is.
 - Worden gegenereerde inhoudsopgave-slides meegeschreven naar XML?
   - Keuze vastleggen met motivatie (reproduceerbaarheid vs afgeleid gegeven).
+  - Keuze: Nee, inhoudsopgave-slides worden dynamisch gegenereerd bij inlezen/tonen, niet opgeslagen.
 - Komt `subject` op elke niet-inhoudsopgave-slide in beeld?
   - Ja/Nee + motivatie.
+  - Keuze: Ja, onderaan elke slide als onderdeel van meta-informatie.
 - Nummering in inhoudsopgave?
   - Ja/Nee + formatteringsregels.
+  - Keuze: Ja, nummering gebaseerd op volgorde in slide-sequentie, reset bij nieuw onderwerp.
 
-## Fase 1 - Ubiquitous Language (Opdracht 1)
+## Fase 1 - Ubiquitous Language (Opdracht 1) - Check (code, zonder verslag)
 
 3. Ubiquitous Language uitbreiden
-- Voeg concepten toe: `Subject`, `TableOfContents`, `GeneratedSlide` (indien gebruikt), `TopicBlock`.
+- Voeg concepten toe.
 - Definieer relaties:
   - Slide heeft 0..1 subject.
   - Inhoudsopgave representeert geordende onderwerpregels uit slide-sequentie.
@@ -31,12 +35,12 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
   - Gelijke opeenvolgende subjects clusteren tot 1 inhoudsopgave-item.
   - Onderwerp opnieuw opnemen na onderbreking door ander onderwerp.
 
-4. Verslaginput voorbereiden voor Opdracht 1
+1. Verslaginput voorbereiden voor Opdracht 1
 - Neem alleen feature-relevante UL in hoofdtekst.
 - Zet oorspronkelijke UL in appendix.
 - Beschrijf expliciet welke termen/regels zijn gewijzigd en waarom.
 
-## Fase 2 - Domeinontwerp aanpassen (Opdracht 2)
+## Fase 2 - Domeinontwerp aanpassen (Opdracht 2) - Check (code, zonder verslag)
 
 5. Domeinmodel herzien op veranderbaarheid
 - Voeg expliciet concepten toe voor onderwerp en inhoudsopgave-generatie.
