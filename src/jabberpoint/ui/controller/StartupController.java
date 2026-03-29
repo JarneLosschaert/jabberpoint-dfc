@@ -12,7 +12,7 @@ public final class StartupController {
 
 	public StartupController(BuildTableOfContentsUseCase buildTableOfContentsUseCase) {
 		this.buildTableOfContentsUseCase = Objects.requireNonNull(buildTableOfContentsUseCase,
-				"buildTableOfContentsUseCase");
+				"buildTableOfContentsUseCase must not be null");
 	}
 
 	public String buildStatusText(String slideShowId) {

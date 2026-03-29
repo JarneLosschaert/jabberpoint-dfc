@@ -11,13 +11,14 @@ import jabberpoint.domain.model.Subject;
 public final class ConsecutiveSubjectTableOfContentsGenerator implements TableOfContentsGenerator {
 	@Override
 	public List<TableOfContentsEntry> generate(List<Slide> orderedSlides) {
-		List<Slide> safeSlides = Objects.requireNonNull(orderedSlides, "orderedSlides");
+		List<Slide> safeSlides = Objects.requireNonNull(orderedSlides, "orderedSlides must not be null");
 		List<TableOfContentsEntry> entries = new ArrayList<>();
 		Subject previousSubject = null;
 
 		for (int index = 0; index < safeSlides.size(); index++) {
 			Slide slide = safeSlides.get(index);
-			// Placeholder slides are insertion markers and should never appear as TOC content.
+			// Placeholder toc slides are insertion markers and should never appear as TOC
+			// content. Will be removed later.
 			if (slide.isTableOfContentsPlaceholder()) {
 				continue;
 			}

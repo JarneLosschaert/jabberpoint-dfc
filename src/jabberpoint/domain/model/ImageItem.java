@@ -6,7 +6,7 @@ public final class ImageItem implements SlideItem {
 	private final String source;
 
 	public ImageItem(String source) {
-		String normalizedSource = Objects.requireNonNull(source, "source").trim();
+		String normalizedSource = Objects.requireNonNull(source, "source must not be null").trim();
 		if (normalizedSource.isEmpty()) {
 			throw new IllegalArgumentException("Image source cannot be empty");
 		}
