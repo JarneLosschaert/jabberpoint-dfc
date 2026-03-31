@@ -25,9 +25,10 @@ public final class InMemorySlideShowRepository implements SlideShowRepository {
 	}
 
 	private SlideShow createDemoSlideShow() {
-		// Demo data keeps infrastructure independent from XML while phase 4 is not implemented yet.
+		// Demo data keeps infrastructure independent from XML
 		List<Slide> slides = List.of(
-				new Slide("Welcome", Subject.of("Introduction"), false, List.of(new TextItem(0, "Welcome to JabberPoint"))),
+				new Slide("Welcome", Subject.of("Introduction"), false,
+						List.of(new TextItem(0, "Welcome to JabberPoint"))),
 				new Slide("Goals", Subject.of("Introduction"), false, List.of(new TextItem(1, "What we will build"))),
 				new Slide("TOC marker", Subject.of("Introduction"), true, List.of()),
 				new Slide("Architecture", Subject.of("Architecture"), false,

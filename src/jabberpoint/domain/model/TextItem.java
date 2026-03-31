@@ -11,7 +11,7 @@ public final class TextItem implements SlideItem {
 			throw new IllegalArgumentException("Level must be zero or greater");
 		}
 		this.level = level;
-		this.text = Objects.requireNonNull(text, "text").trim();
+		this.text = Objects.requireNonNull(text, "text must not be null").trim();
 	}
 
 	public int level() {

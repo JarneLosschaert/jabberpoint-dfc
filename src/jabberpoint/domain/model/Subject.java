@@ -11,7 +11,8 @@ public final class Subject {
 		this.value = value;
 	}
 
-	// Strict factory: call sites that require a real subject should use this method.
+	// Strict factory: call sites that require a real subject should use this
+	// method (internal use).
 	public static Subject of(String rawValue) {
 		String normalized = normalize(rawValue);
 		if (normalized.isEmpty()) {
@@ -20,7 +21,8 @@ public final class Subject {
 		return new Subject(normalized);
 	}
 
-	// Tolerant factory: useful when reading external input where subject may be missing.
+	// Tolerant factory: useful when reading external input where subject may be
+	// missing (external use).
 	public static Subject fromNullable(String rawValue) {
 		String normalized = normalize(rawValue);
 		if (normalized.isEmpty()) {

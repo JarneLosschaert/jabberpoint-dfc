@@ -11,8 +11,8 @@ public final class SlideShow {
 	private final List<Slide> slides;
 
 	public SlideShow(String id, String title, List<Slide> slides) {
-		String normalizedId = Objects.requireNonNull(id, "id").trim();
-		String normalizedTitle = Objects.requireNonNull(title, "title").trim();
+		String normalizedId = Objects.requireNonNull(id, "id must not be null").trim();
+		String normalizedTitle = Objects.requireNonNull(title, "title must not be null").trim();
 		if (normalizedId.isEmpty()) {
 			throw new IllegalArgumentException("Slide show id cannot be empty");
 		}
@@ -21,7 +21,7 @@ public final class SlideShow {
 		}
 		this.id = normalizedId;
 		this.title = normalizedTitle;
-		this.slides = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(slides, "slides")));
+		this.slides = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(slides, "slides must not be null")));
 	}
 
 	public String id() {
