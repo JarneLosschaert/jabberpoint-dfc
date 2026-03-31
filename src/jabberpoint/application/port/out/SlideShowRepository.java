@@ -10,5 +10,6 @@ import jabberpoint.domain.model.SlideShow;
  * Dependency direction: infrastructure adapters implement this outbound port.
  */
 public interface SlideShowRepository {
-	Optional<SlideShow> findById(String slideShowId);
+
+    Optional<SlideShow> findById(String slideShowId);
 }

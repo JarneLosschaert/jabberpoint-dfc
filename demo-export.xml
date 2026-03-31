@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<presentation>
+  <showtitle>Demo Slide Show</showtitle>
+  <slide>
+    <title>Welcome</title>
+    <subject>Introduction</subject>
+    <item kind="text" level="0">Welcome to JabberPoint</item>
+  </slide>
+  <slide>
+    <title>Goals</title>
+    <subject>Introduction</subject>
+    <item kind="text" level="1">What we will build</item>
+  </slide>
+  <slide>
+    <title>TOC marker</title>
+    <subject>Introduction</subject>
+    <toc>true</toc>
+  </slide>
+  <slide>
+    <title>Architecture</title>
+    <subject>Architecture</subject>
+    <item kind="text" level="1">Onion architecture in layers</item>
+  </slide>
+  <slide>
+    <title>Wrap-up</title>
+    <item kind="text" level="1">Questions</item>
+  </slide>
+</presentation>
