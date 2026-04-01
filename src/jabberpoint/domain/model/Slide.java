@@ -44,17 +44,10 @@ public final class Slide {
 	}
 
 	/**
-	 * Builder for {@link Slide}. Use this instead of calling the constructor
+	 * Builder for Slide. Use this instead of calling the constructor
 	 * directly. Only the title is mandatory; all other fields have sensible
-	 * defaults so that adding a new field to {@code Slide} in the future only
+	 * defaults so that adding a new field in the future only
 	 * requires updating this builder, not every call site.
-	 *
-	 * <pre>{@code
-	 * Slide slide = new Slide.Builder("Introduction")
-	 *     .subject(Subject.of("Overview"))
-	 *     .items(List.of(new TextItem(0, "Hello")))
-	 *     .build();
-	 * }</pre>
 	 */
 	public static final class Builder {
 		private final String title;

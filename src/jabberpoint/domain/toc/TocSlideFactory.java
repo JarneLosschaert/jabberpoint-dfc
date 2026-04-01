@@ -14,7 +14,6 @@ import jabberpoint.domain.model.TextItem;
  * rendered Slide. Lives in the domain layer so that no application or
  * infrastructure class needs to know the formatting rules.
  */
-
 public final class TocSlideFactory {
 
     private TocSlideFactory() {

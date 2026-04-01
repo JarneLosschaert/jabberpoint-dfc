@@ -15,7 +15,6 @@ import jabberpoint.domain.toc.TocEntry;
  * by retrieving the slide show from the repository and delegating the TOC
  * generation to a domain service.
  */
-
 public interface BuildTocUseCase {
 	List<TocEntry> buildFor(String slideShowId);
 }

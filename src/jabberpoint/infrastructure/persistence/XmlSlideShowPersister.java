@@ -30,11 +30,16 @@ import jabberpoint.domain.model.TextItem;
  * Infrastructure concern: persisting a SlideShow to XML. Lives in the
  * infrastructure layer because it depends on XML libraries and file I/O, and is
  * not needed by any domain or application class.
- * Usage: called by application service when user saves a slideshow. It transforms
- * the SlideShow into an XML document according to the defined contract and writes
- * it to a file. The XML format is designed to be simple and stable, so that it can be
- * easily parsed by the XmlSlideShowRepository when loading a slideshow, and to minimize
- * the impact of future changes to the SlideShow structure on the persistence format.
+ * Usage: called by application service when user saves a slideshow. It
+ * transforms
+ * the SlideShow into an XML document according to the defined contract and
+ * writes
+ * it to a file. The XML format is designed to be simple and stable, so that it
+ * can be
+ * easily parsed by the XmlSlideShowRepository when loading a slideshow, and to
+ * minimize
+ * the impact of future changes to the SlideShow structure on the persistence
+ * format.
  */
 
 public final class XmlSlideShowPersister implements SlideShowPersister {
@@ -79,7 +84,8 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                     Element itemElement = document.createElement("item");
                     /*
                      * Changed the if/else to switch expression, so when a new type of slide item is
-                     * added, it can be easily integrated
+                     * added, it can be easily integrated. And so the error won't be silent if a new
+                     * type is added but not handled here.
                      */
                     switch (item) {
                         case TextItem t -> {
@@ -96,7 +102,8 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
             }
 
             writeDocument(document, fileName);
-            LOG.info("Saved slide show '" + slideShow.id() + "' (" + slideShow.slides().size() + " slides) to " + fileName);
+            LOG.info("Saved slide show '" + slideShow.id() + "' (" + slideShow.slides().size() + " slides) to "
+                    + fileName);
         } catch (ParserConfigurationException | TransformerException | IOException e) {
             throw new RuntimeException("Failed to persist slideshow to XML: " + fileName, e);
         }

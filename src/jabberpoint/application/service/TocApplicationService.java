@@ -22,7 +22,6 @@ import jabberpoint.domain.toc.TocSlideFactory;
  * application service does not contain any business logic itself, but coordinates
  * the interaction between the domain and infrastructure layers.
 */
-
 public final class TocApplicationService implements BuildTocUseCase, BuildSlideShowWithTocUseCase {
 
 	private static final Logger LOG = Logger.getLogger(TocApplicationService.class.getName());

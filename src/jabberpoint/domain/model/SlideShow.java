@@ -37,7 +37,7 @@ public final class SlideShow {
 	}
 
 	/**
-	 * Returns a new {@link SlideShow} with the same identity and title but a
+	 * Returns a new SlideShow with the same identity and title but a
 	 * different slide list. Use this when deriving a modified version of the slide
 	 * show (e.g. with TOC slides inserted), so that callers never need to repeat
 	 * the other fields and remain correct if new fields are added later.
