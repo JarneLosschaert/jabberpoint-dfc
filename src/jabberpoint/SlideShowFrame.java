@@ -82,18 +82,22 @@ public class SlideShowFrame extends JFrame {
         subjectLabel.setText(slide.subject().value());
         itemsPanel.removeAll();
         for (SlideItem item : slide.items()) {
-            if (item instanceof TextItem textItem) {
-                String indent = "  ".repeat(textItem.level());
-                JLabel label = new JLabel(indent + textItem.text());
-                itemsPanel.add(label);
-            } else if (item instanceof ImageItem imageItem) {
-                try {
-                    ImageIcon icon = new ImageIcon(imageItem.source());
-                    JLabel label = new JLabel(icon);
+            /* Changed the if/else to switch expression, so when a new type of slide item is added, it can be easily integrated */
+            switch (item) {
+                case TextItem textItem -> {
+                    String indent = "  ".repeat(textItem.level());
+                    JLabel label = new JLabel(indent + textItem.text());
                     itemsPanel.add(label);
-                } catch (Exception e) {
-                    JLabel label = new JLabel("Image: " + imageItem.source());
-                    itemsPanel.add(label);
+                }
+                case ImageItem imageItem -> {
+                    try {
+                        ImageIcon icon = new ImageIcon(imageItem.source());
+                        JLabel label = new JLabel(icon);
+                        itemsPanel.add(label);
+                    } catch (Exception e) {
+                        JLabel label = new JLabel("Image: " + imageItem.source());
+                        itemsPanel.add(label);
+                    }
                 }
             }
         }

@@ -39,6 +39,10 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // Prevent XXE: disable external entity loading while keeping DOCTYPE processing
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(xmlFile);
             doc.getDocumentElement().normalize();
@@ -106,7 +110,8 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
 
     private boolean parseTocPlaceholder(Element slideElement) {
         NodeList tocNodes = slideElement.getElementsByTagName("toc");
-        return tocNodes.getLength() > 0;
+        return tocNodes.getLength() > 0
+                && "true".equalsIgnoreCase(tocNodes.item(0).getTextContent().trim());
     }
 
     private List<SlideItem> parseItems(Element slideElement) {

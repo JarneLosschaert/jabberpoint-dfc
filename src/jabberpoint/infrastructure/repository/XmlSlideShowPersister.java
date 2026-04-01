@@ -18,10 +18,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import jabberpoint.application.port.out.SlideShowPersister;
+import jabberpoint.domain.model.ImageItem;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
 import jabberpoint.domain.model.Subject;
+import jabberpoint.domain.model.TextItem;
 
 public final class XmlSlideShowPersister implements SlideShowPersister {
     @Override
@@ -60,9 +62,13 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
 
                 for (SlideItem item : slide.items()) {
                     Element itemElement = document.createElement("item");
-                    itemElement.setAttribute("kind", item instanceof jabberpoint.domain.model.ImageItem ? "image" : "text");
-                    if (item instanceof jabberpoint.domain.model.TextItem) {
-                        itemElement.setAttribute("level", Integer.toString(((jabberpoint.domain.model.TextItem) item).level()));
+                    /* Changed the if/else to switch expression, so when a new type of slide item is added, it can be easily integrated */
+                    switch (item) {
+                        case TextItem t -> {
+                            itemElement.setAttribute("kind", "text");
+                            itemElement.setAttribute("level", Integer.toString(t.level()));
+                        }
+                        case ImageItem _ -> itemElement.setAttribute("kind", "image");
                     }
                     itemElement.setTextContent(item.renderText());
                     slideElement.appendChild(itemElement);

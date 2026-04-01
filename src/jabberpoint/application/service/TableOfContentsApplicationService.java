@@ -9,12 +9,10 @@ import jabberpoint.application.port.in.BuildTableOfContentsUseCase;
 import jabberpoint.application.port.in.BuildSlideShowWithTableOfContentsUseCase;
 import jabberpoint.application.port.out.SlideShowRepository;
 import jabberpoint.domain.model.Slide;
-import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
-import jabberpoint.domain.model.Subject;
-import jabberpoint.domain.model.TextItem;
 import jabberpoint.domain.toc.TableOfContentsEntry;
 import jabberpoint.domain.toc.TableOfContentsGenerator;
+import jabberpoint.domain.toc.TableOfContentsSlideFactory;
 
 /*
  * Application service for building a table of contents for a slide show. This
@@ -50,43 +48,15 @@ public final class TableOfContentsApplicationService implements BuildTableOfCont
 		}
 		SlideShow original = slideShowOpt.get();
 		List<Slide> originalSlides = original.slides();
-		List<Integer> tocPositions = new ArrayList<>();
-		for (int i = 0; i < originalSlides.size(); i++) {
-			if (originalSlides.get(i).isTableOfContentsPlaceholder()) {
-				tocPositions.add(i);
-			}
-		}
-		List<TableOfContentsEntry> rawEntries = tableOfContentsGenerator.generate(originalSlides);
-		List<TableOfContentsEntry> adjustedEntries = new ArrayList<>();
-		for (TableOfContentsEntry entry : rawEntries) {
-			int originalPos = entry.slideNumber() - 1; // 1-based to 0-based
-			int adjustment = 0;
-			for (int tocPos : tocPositions) {
-				if (tocPos < originalPos) {
-					adjustment++;
-				}
-			}
-			int newPos = originalPos + adjustment + 1; // back to 1-based
-			adjustedEntries.add(new TableOfContentsEntry(newPos, entry.subject()));
-		}
+		List<TableOfContentsEntry> entries = tableOfContentsGenerator.generate(originalSlides);
 		List<Slide> newSlides = new ArrayList<>();
-		for (int i = 0; i < originalSlides.size(); i++) {
-			Slide slide = originalSlides.get(i);
+		for (Slide slide : originalSlides) {
 			if (slide.isTableOfContentsPlaceholder()) {
-				newSlides.add(createTableOfContentsSlide(adjustedEntries));
+				newSlides.add(TableOfContentsSlideFactory.create(entries));
 			} else {
 				newSlides.add(slide);
 			}
 		}
-		SlideShow newSlideShow = new SlideShow(original.id(), original.title(), newSlides);
-		return Optional.of(newSlideShow);
-	}
-
-	private Slide createTableOfContentsSlide(List<TableOfContentsEntry> entries) {
-		List<SlideItem> items = new ArrayList<>();
-		for (TableOfContentsEntry entry : entries) {
-			items.add(new TextItem(0, entry.slideNumber() + ". " + entry.subject().value()));
-		}
-		return new Slide("Table of Contents", Subject.of("Table of Contents"), false, items);
+		return Optional.of(new SlideShow(original.id(), original.title(), newSlides));
 	}
 }
