@@ -128,7 +128,7 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 - Alleen feature-relevante wijziging in hoofdtekst.
 - Oorspronkelijk ontwerp in appendix.
 
-## Fase 7 - Objectcreatie aanpassen (Opdracht 4)
+## Fase 7 - Objectcreatie aanpassen (Opdracht 4) - Check (code, zonder verslag)
 
 19. Objectcreatie uitbreiden voor nieuwe concepten
 - Factories/builders/constructors aanpassen voor subject/toc concepten.

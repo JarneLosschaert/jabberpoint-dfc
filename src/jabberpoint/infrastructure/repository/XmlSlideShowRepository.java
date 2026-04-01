@@ -98,10 +98,13 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
     private Slide parseSlide(Element slideElement) {
         String title = parseTitle(slideElement);
         Subject subject = parseSubject(slideElement);
-        boolean isTocPlaceholder = parseTocPlaceholder(slideElement);
         List<SlideItem> items = parseItems(slideElement);
 
-        return new Slide(title, subject, isTocPlaceholder, items);
+        Slide.Builder builder = new Slide.Builder(title).subject(subject).items(items);
+        if (parseTocPlaceholder(slideElement)) {
+            builder.tocPlaceholder();
+        }
+        return builder.build();
     }
 
     private String parseTitle(Element slideElement) {

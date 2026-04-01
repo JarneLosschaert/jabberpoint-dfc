@@ -27,13 +27,26 @@ public final class InMemorySlideShowRepository implements SlideShowRepository {
 	private SlideShow createDemoSlideShow() {
 		// Demo data keeps infrastructure independent from XML
 		List<Slide> slides = List.of(
-				new Slide("Welcome", Subject.of("Introduction"), false,
-						List.of(new TextItem(0, "Welcome to JabberPoint"))),
-				new Slide("Goals", Subject.of("Introduction"), false, List.of(new TextItem(1, "What we will build"))),
-				new Slide("TOC marker", Subject.of("Introduction"), true, List.of()),
-				new Slide("Architecture", Subject.of("Architecture"), false,
-						List.of(new TextItem(1, "Onion architecture in layers"))),
-				new Slide("Wrap-up", Subject.fromNullable(null), false, List.of(new TextItem(1, "Questions"))));
+				new Slide.Builder("Welcome")
+						.subject(Subject.of("Introduction"))
+						.items(List.of(new TextItem(0, "Welcome to JabberPoint")))
+						.build(),
+				new Slide.Builder("Goals")
+						.subject(Subject.of("Introduction"))
+						.items(List.of(new TextItem(1, "What we will build")))
+						.build(),
+				new Slide.Builder("TOC marker")
+						.subject(Subject.of("Introduction"))
+						.tocPlaceholder()
+						.build(),
+				new Slide.Builder("Architecture")
+						.subject(Subject.of("Architecture"))
+						.items(List.of(new TextItem(1, "Onion architecture in layers")))
+						.build(),
+				new Slide.Builder("Wrap-up")
+						.subject(Subject.fromNullable(null))
+						.items(List.of(new TextItem(1, "Questions")))
+						.build());
 
 		return new SlideShow("demo", "Demo Slide Show", slides);
 	}

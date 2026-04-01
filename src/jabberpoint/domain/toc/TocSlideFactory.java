@@ -26,6 +26,10 @@ public final class TocSlideFactory {
         for (TocEntry entry : entries) {
             items.add(new TextItem(0, entry.slideNumber() + ". " + entry.subject().value()));
         }
-        return new Slide("Table of Contents", Subject.of("Table of Contents"), true, items);
+        return new Slide.Builder("Table of Contents")
+                .subject(Subject.of("Table of Contents"))
+                .items(items)
+                .tocPlaceholder()
+                .build();
     }
 }

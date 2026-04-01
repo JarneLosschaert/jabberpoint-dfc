@@ -65,6 +65,6 @@ public final class TocApplicationService implements BuildTocUseCase, BuildSlideS
 		}
 		long replacedCount = originalSlides.stream().filter(Slide::isTableOfContentsPlaceholder).count();
 		LOG.info("Built slide show '" + slideShowId + "' with " + replacedCount + " TOC placeholder(s) replaced");
-		return Optional.of(new SlideShow(original.id(), original.title(), newSlides));
+		return Optional.of(original.withSlides(newSlides));
 	}
 }
