@@ -10,9 +10,9 @@ import jabberpoint.domain.model.Slide;
  * business logic to analyze the structure of the slides and determine the
  * entries for the table of contents. The application layer depends on this
  * interface to obtain the data needed to build the table of contents without
- * being coupled to the underlying domain logic. Default: ConsecutiveSubjectTableOfContentsGenerator, 
+ * being coupled to the underlying domain logic. Default: ConsecutiveSubjectTocGenerator,
  * which generates entries based on consecutive subjects in the slide list.
 */
-public interface TableOfContentsGenerator {
-	List<TableOfContentsEntry> generate(List<Slide> orderedSlides);
+public interface TocGenerator {
+	List<TocEntry> generate(List<Slide> orderedSlides);
 }

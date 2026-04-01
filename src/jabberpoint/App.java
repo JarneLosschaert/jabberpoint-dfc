@@ -2,13 +2,13 @@ package jabberpoint;
 
 import javax.swing.SwingUtilities;
 
-import jabberpoint.application.port.in.BuildSlideShowWithTableOfContentsUseCase;
-//import jabberpoint.application.port.in.BuildTableOfContentsUseCase;
+import jabberpoint.application.port.in.BuildSlideShowWithTocUseCase;
+//import jabberpoint.application.port.in.BuildTocUseCase;
 import jabberpoint.application.port.out.SlideShowRepository;
 import jabberpoint.application.port.out.SlideShowPersister;// demo
-import jabberpoint.application.service.TableOfContentsApplicationService;
-import jabberpoint.domain.toc.ConsecutiveSubjectTableOfContentsGenerator;
-import jabberpoint.domain.toc.TableOfContentsGenerator;
+import jabberpoint.application.service.TocApplicationService;
+import jabberpoint.domain.toc.ConsecutiveSubjectTocGenerator;
+import jabberpoint.domain.toc.TocGenerator;
 //import jabberpoint.infrastructure.repository.InMemorySlideShowRepository;
 import jabberpoint.infrastructure.repository.XmlSlideShowRepository;
 import jabberpoint.infrastructure.repository.XmlSlideShowPersister;//demo
@@ -21,12 +21,11 @@ public final class App {
 
 	public static void main(String[] args) {
 		SlideShowRepository slideShowRepository = new XmlSlideShowRepository();
-		TableOfContentsGenerator tableOfContentsGenerator = new ConsecutiveSubjectTableOfContentsGenerator();
-		TableOfContentsApplicationService tableOfContentsApplicationService = new TableOfContentsApplicationService(
-				slideShowRepository, tableOfContentsGenerator);
-		//BuildTableOfContentsUseCase buildTableOfContentsUseCase = tableOfContentsApplicationService;
-		BuildSlideShowWithTableOfContentsUseCase buildSlideShowWithTableOfContentsUseCase = tableOfContentsApplicationService;
-		//StartupController startupController = new StartupController(buildTableOfContentsUseCase);
+		TocGenerator tocGenerator = new ConsecutiveSubjectTocGenerator();
+		TocApplicationService tocApplicationService = new TocApplicationService(slideShowRepository, tocGenerator);
+		//BuildTocUseCase buildTocUseCase = tocApplicationService;
+		BuildSlideShowWithTocUseCase buildSlideShowWithTocUseCase = tocApplicationService;
+		//StartupController startupController = new StartupController(buildTocUseCase);
 
 		// Demonstrate XML-serialisatie van ingelezen presentatie
 		SlideShowPersister slideShowPersister = new XmlSlideShowPersister();
@@ -34,7 +33,7 @@ public final class App {
 				.ifPresent(slideShow -> slideShowPersister.save(slideShow, "demo-export.xml"));
 
 		// Demonstrate building a slide show met TOC and lancering van UI
-		buildSlideShowWithTableOfContentsUseCase.buildWithTableOfContents("demo")
+		buildSlideShowWithTocUseCase.buildWithTableOfContents("demo")
 				.ifPresent(slideShow -> SwingUtilities.invokeLater(() -> {
 					SlideShowFrame frame = new SlideShowFrame(slideShow);
 					frame.setVisible(true);

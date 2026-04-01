@@ -8,11 +8,11 @@ import java.util.Objects;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.Subject;
 
-public final class ConsecutiveSubjectTableOfContentsGenerator implements TableOfContentsGenerator {
+public final class ConsecutiveSubjectTocGenerator implements TocGenerator {
 	@Override
-	public List<TableOfContentsEntry> generate(List<Slide> orderedSlides) {
+	public List<TocEntry> generate(List<Slide> orderedSlides) {
 		List<Slide> safeSlides = Objects.requireNonNull(orderedSlides, "orderedSlides must not be null");
-		List<TableOfContentsEntry> entries = new ArrayList<>();
+		List<TocEntry> entries = new ArrayList<>();
 		Subject previousSubject = null;
 
 		for (int index = 0; index < safeSlides.size(); index++) {
@@ -26,7 +26,7 @@ public final class ConsecutiveSubjectTableOfContentsGenerator implements TableOf
 			Subject currentSubject = slide.subject();
 			// Consecutive deduplication rule
 			if (!currentSubject.equals(previousSubject)) {
-				entries.add(new TableOfContentsEntry(index + 1, currentSubject));
+				entries.add(new TocEntry(index + 1, currentSubject));
 				previousSubject = currentSubject;
 			}
 		}

@@ -1,12 +1,16 @@
 package jabberpoint;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
@@ -23,9 +27,14 @@ import jabberpoint.domain.model.ImageItem;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
+import jabberpoint.domain.model.Subject;
 import jabberpoint.domain.model.TextItem;
 
 public class SlideShowFrame extends JFrame {
+    private static final String TOC_SLIDE_TITLE = "Table of Contents";
+    private static final Color ACTIVE_SECTION_COLOR = new Color(0, 100, 200);
+    private static final Color INACTIVE_SECTION_COLOR = Color.DARK_GRAY;
+
     private final SlideShow slideShow;
     private int currentSlideIndex = 0;
     private final JLabel titleLabel;
@@ -81,6 +90,61 @@ public class SlideShowFrame extends JFrame {
         titleLabel.setText(slide.title());
         subjectLabel.setText(slide.subject().value());
         itemsPanel.removeAll();
+
+        if (isTocSlide(slide)) {
+            renderTocItems(slide, findActiveSubject(index));
+        } else {
+            renderRegularItems(slide);
+        }
+
+        slideNumberLabel.setText("Slide " + (index + 1) + " of " + slideShow.slides().size());
+        itemsPanel.revalidate();
+        itemsPanel.repaint();
+    }
+
+    /** A slide is a generated TOC slide when its title matches the factory constant. */
+    private boolean isTocSlide(Slide slide) {
+        return TOC_SLIDE_TITLE.equals(slide.title());
+    }
+
+    /**
+     * Determines the active section when standing on a TOC slide.
+     * Looks forward first (section we are about to enter), then backward
+     * (section we just left) as fallback.
+     */
+    private Subject findActiveSubject(int tocIndex) {
+        List<Slide> slides = slideShow.slides();
+        for (int i = tocIndex + 1; i < slides.size(); i++) {
+            if (!isTocSlide(slides.get(i))) {
+                return slides.get(i).subject();
+            }
+        }
+        for (int i = tocIndex - 1; i >= 0; i--) {
+            if (!isTocSlide(slides.get(i))) {
+                return slides.get(i).subject();
+            }
+        }
+        return Subject.unknown();
+    }
+
+    /** Renders a generated TOC slide: each entry as a numbered row, active section highlighted. */
+    private void renderTocItems(Slide slide, Subject activeSubject) {
+        Font tocFont = new Font(Font.SANS_SERIF, Font.PLAIN, 18);
+        Font activeTocFont = tocFont.deriveFont(Font.BOLD);
+        for (SlideItem item : slide.items()) {
+            if (item instanceof TextItem textItem) {
+                boolean isActive = textItem.text().endsWith(activeSubject.value());
+                JLabel label = new JLabel(textItem.text(), SwingConstants.LEFT);
+                label.setFont(isActive ? activeTocFont : tocFont);
+                label.setForeground(isActive ? ACTIVE_SECTION_COLOR : INACTIVE_SECTION_COLOR);
+                label.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
+                itemsPanel.add(label);
+            }
+        }
+    }
+
+    /** Renders a regular (non-TOC) slide: text with indentation levels, images. */
+    private void renderRegularItems(Slide slide) {
         for (SlideItem item : slide.items()) {
             /* Changed the if/else to switch expression, so when a new type of slide item is added, it can be easily integrated */
             switch (item) {
@@ -101,9 +165,6 @@ public class SlideShowFrame extends JFrame {
                 }
             }
         }
-        slideNumberLabel.setText("Slide " + (index + 1) + " of " + slideShow.slides().size());
-        itemsPanel.revalidate();
-        itemsPanel.repaint();
     }
 
     private void showPreviousSlide() {

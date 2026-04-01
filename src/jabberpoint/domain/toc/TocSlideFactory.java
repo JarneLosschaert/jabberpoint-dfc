@@ -14,15 +14,15 @@ import jabberpoint.domain.model.TextItem;
  * rendered Slide. Lives in the domain layer so that no application or
  * infrastructure class needs to know the formatting rules.
  */
-public final class TableOfContentsSlideFactory {
+public final class TocSlideFactory {
 
-    private TableOfContentsSlideFactory() {
+    private TocSlideFactory() {
         // utility class
     }
 
-    public static Slide create(List<TableOfContentsEntry> entries) {
+    public static Slide create(List<TocEntry> entries) {
         List<SlideItem> items = new ArrayList<>();
-        for (TableOfContentsEntry entry : entries) {
+        for (TocEntry entry : entries) {
             items.add(new TextItem(0, entry.slideNumber() + ". " + entry.subject().value()));
         }
         return new Slide("Table of Contents", Subject.of("Table of Contents"), false, items);

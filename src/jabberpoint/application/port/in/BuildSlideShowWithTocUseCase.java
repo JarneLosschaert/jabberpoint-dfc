@@ -4,6 +4,6 @@ import java.util.Optional;
 
 import jabberpoint.domain.model.SlideShow;
 
-public interface BuildSlideShowWithTableOfContentsUseCase {
+public interface BuildSlideShowWithTocUseCase {
     Optional<SlideShow> buildWithTableOfContents(String slideShowId);
 }

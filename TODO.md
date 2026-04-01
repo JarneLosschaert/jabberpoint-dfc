@@ -92,7 +92,7 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 - Serviceslaag levert data; infrastructuur bepaalt XML-representatie.
 - Leg beleid vast voor gegenereerde inhoudsopgave-slides bij serialisatie.
 
-## Fase 5 - Feature-implementatie inhoudsopgave
+## Fase 5 - Feature-implementatie inhoudsopgave - Check (code, zonder verslag)
 
 13. Algoritme voor inhoudsopgave opstellen
 - Input: slides met subjects in volgorde.
