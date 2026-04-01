@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import jabberpoint.application.port.in.BuildTocUseCase;
 import jabberpoint.application.port.in.BuildSlideShowWithTocUseCase;
@@ -23,6 +24,9 @@ import jabberpoint.domain.toc.TocSlideFactory;
 */
 
 public final class TocApplicationService implements BuildTocUseCase, BuildSlideShowWithTocUseCase {
+
+	private static final Logger LOG = Logger.getLogger(TocApplicationService.class.getName());
+
 	private final SlideShowRepository slideShowRepository;
 	private final TocGenerator tocGenerator;
 
@@ -34,15 +38,18 @@ public final class TocApplicationService implements BuildTocUseCase, BuildSlideS
 	@Override
 	public List<TocEntry> buildFor(String slideShowId) {
 		// Application orchestration only: fetch aggregate and delegate TOC policy to domain service.
+		LOG.info("Building TOC for slide show '" + slideShowId + "'");
 		SlideShow slideShow = slideShowRepository.findById(slideShowId)
 				.orElseThrow(() -> new IllegalArgumentException("Unknown slide show id: " + slideShowId));
 		return tocGenerator.generate(slideShow.slides());
 	}
 
 	@Override
-	public Optional<SlideShow> buildWithTableOfContents(String slideShowId) {
+	public Optional<SlideShow> build(String slideShowId) {
+		LOG.info("Building slide show with TOC for '" + slideShowId + "'");
 		Optional<SlideShow> slideShowOpt = slideShowRepository.findById(slideShowId);
 		if (slideShowOpt.isEmpty()) {
+			LOG.warning("Slide show '" + slideShowId + "' not found; returning empty");
 			return Optional.empty();
 		}
 		SlideShow original = slideShowOpt.get();
@@ -56,6 +63,8 @@ public final class TocApplicationService implements BuildTocUseCase, BuildSlideS
 				newSlides.add(slide);
 			}
 		}
+		long replacedCount = originalSlides.stream().filter(Slide::isTableOfContentsPlaceholder).count();
+		LOG.info("Built slide show '" + slideShowId + "' with " + replacedCount + " TOC placeholder(s) replaced");
 		return Optional.of(new SlideShow(original.id(), original.title(), newSlides));
 	}
 }

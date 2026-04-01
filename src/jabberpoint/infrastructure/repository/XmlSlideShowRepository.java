@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,31 +24,42 @@ import jabberpoint.domain.model.SlideShow;
 import jabberpoint.domain.model.Subject;
 import jabberpoint.domain.model.TextItem;
 
+/**
+ * Infrastructure concern: loading a SlideShow from XML. Lives in the
+ * infrastructure layer because it depends on XML libraries and file I/O, and is
+ * not needed by any domain or application class.
+ * Usage: called by application service when user opens a slideshow. It looks
+ * for an XML file with the given ID, parses it according to the defined
+ * contract, and transforms it into a SlideShow object. The XML format is
+ * designed to be simple and stable, so that it can be easily parsed by this
+ * repository, and to minimize the impact of future changes to the SlideShow
+ * structure on the persistence format.
+ */
+
 public final class XmlSlideShowRepository implements SlideShowRepository {
 
+    private static final Logger LOG = Logger.getLogger(XmlSlideShowRepository.class.getName());
     private static final String XML_EXTENSION = ".xml";
 
     @Override
     public Optional<SlideShow> findById(String slideShowId) {
-        // look for the file 
         String fileName = slideShowId + XML_EXTENSION;
         File xmlFile = new File(fileName);
 
         if (!xmlFile.exists()) {
-            return Optional.empty();// If file does not exist. 
+            LOG.info("No XML file found for slide show id '" + slideShowId + "' (looked for: " + fileName + ")");
+            return Optional.empty();
         }
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            // Prevent XXE: disable external entity loading while keeping DOCTYPE processing
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(xmlFile);
             doc.getDocumentElement().normalize();
 
-            return Optional.of(parseSlideShow(doc, slideShowId));
+            SlideShow slideShow = parseSlideShow(doc, slideShowId);
+            LOG.info("Loaded slide show '" + slideShowId + "' with " + slideShow.slides().size() + " slides from " + fileName);
+            return Optional.of(slideShow);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new RuntimeException("Failed to parse XML file: " + fileName, e);
         }
@@ -67,6 +79,7 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         if (titleNodes.getLength() > 0) {
             return titleNodes.item(0).getTextContent().trim();
         }
+        LOG.warning("No <showtitle> element found; defaulting to 'Untitled Presentation'");
         return "Untitled Presentation";
     }
 
@@ -96,6 +109,7 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         if (titleNodes.getLength() > 0) {
             return titleNodes.item(0).getTextContent().trim();
         }
+        LOG.warning("Slide has no <title> element; defaulting to 'Untitled Slide'");
         return "Untitled Slide";
     }
 
@@ -136,7 +150,7 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         } else if ("image".equals(kind)) {
             return new ImageItem(content);
         } else {
-            // if kind is not known.
+            LOG.warning("Unknown item kind '" + kind + "'; treating as plain text at level 0");
             return new TextItem(0, content);
         }
     }
@@ -147,6 +161,7 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
             try {
                 return Integer.parseInt(levelStr);
             } catch (NumberFormatException e) {
+                LOG.warning("Invalid level value '" + levelStr + "'; defaulting to 0");
                 return 0;
             }
         }

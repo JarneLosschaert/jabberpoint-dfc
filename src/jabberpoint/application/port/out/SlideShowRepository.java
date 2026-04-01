@@ -12,7 +12,7 @@ import jabberpoint.domain.model.SlideShow;
  * Default: InMemorySlideShowRepository, which provides a hardcoded demo slide
  * show for testing and development purposes (for now).
  */
-public interface SlideShowRepository {
 
+public interface SlideShowRepository {
     Optional<SlideShow> findById(String slideShowId);
 }

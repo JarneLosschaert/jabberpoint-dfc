@@ -71,7 +71,7 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 - Infrastructuur kent domeinservices-contracten of controller (volgens gekozen variant).
 - UI praat niet direct met XML parser.
 
-## Fase 4 - XML contract en infrastructuur
+## Fase 4 - XML contract en infrastructuur - Check (code, zonder verslag)
 
 10. DTD uitbreiden
 - Voeg toe:
@@ -110,7 +110,7 @@ Dit bestand zet alle taken in werkvolgorde, gebaseerd op de opdrachttekst.
 - Eventueel actieve sectie markeren (optioneel).
 - Eventueel nummering toepassen.
 
-## Fase 6 - UI en andere lagen aanpassen (Opdracht 3)
+## Fase 6 - UI en andere lagen aanpassen (Opdracht 3) - Check (code, zonder verslag)
 
 16. Swing/AWT UI integreren
 - Minimaal:

@@ -1,4 +1,4 @@
-package jabberpoint;
+package jabberpoint.ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -103,10 +103,6 @@ Stefano Igbinosun & Jarne Losschaert
 
 # 8. Notes
 
-- Not sure about lists and levels.
-
-> **Assignment:** Some items are in a list (the list may be bulleted, but not necessarily). These items usually have a level, which may dictate the font that will be used for the item, and the place on the slide (from left to right), where they start.
-
 - Annotation? Depending on the slide projector either analog or digital.
 - Is it possible to jump to a specific slide by number?
 - Include container or projector?

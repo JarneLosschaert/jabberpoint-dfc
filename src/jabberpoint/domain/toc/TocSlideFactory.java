@@ -14,6 +14,7 @@ import jabberpoint.domain.model.TextItem;
  * rendered Slide. Lives in the domain layer so that no application or
  * infrastructure class needs to know the formatting rules.
  */
+
 public final class TocSlideFactory {
 
     private TocSlideFactory() {
@@ -25,6 +26,6 @@ public final class TocSlideFactory {
         for (TocEntry entry : entries) {
             items.add(new TextItem(0, entry.slideNumber() + ". " + entry.subject().value()));
         }
-        return new Slide("Table of Contents", Subject.of("Table of Contents"), false, items);
+        return new Slide("Table of Contents", Subject.of("Table of Contents"), true, items);
     }
 }

@@ -1,8 +1,9 @@
-package jabberpoint.infrastructure.repository;
+package jabberpoint.infrastructure.persistence;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,7 +26,21 @@ import jabberpoint.domain.model.SlideShow;
 import jabberpoint.domain.model.Subject;
 import jabberpoint.domain.model.TextItem;
 
+/**
+ * Infrastructure concern: persisting a SlideShow to XML. Lives in the
+ * infrastructure layer because it depends on XML libraries and file I/O, and is
+ * not needed by any domain or application class.
+ * Usage: called by application service when user saves a slideshow. It transforms
+ * the SlideShow into an XML document according to the defined contract and writes
+ * it to a file. The XML format is designed to be simple and stable, so that it can be
+ * easily parsed by the XmlSlideShowRepository when loading a slideshow, and to minimize
+ * the impact of future changes to the SlideShow structure on the persistence format.
+ */
+
 public final class XmlSlideShowPersister implements SlideShowPersister {
+
+    private static final Logger LOG = Logger.getLogger(XmlSlideShowPersister.class.getName());
+
     @Override
     public void save(SlideShow slideShow, String fileName) {
         try {
@@ -62,7 +77,10 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
 
                 for (SlideItem item : slide.items()) {
                     Element itemElement = document.createElement("item");
-                    /* Changed the if/else to switch expression, so when a new type of slide item is added, it can be easily integrated */
+                    /*
+                     * Changed the if/else to switch expression, so when a new type of slide item is
+                     * added, it can be easily integrated
+                     */
                     switch (item) {
                         case TextItem t -> {
                             itemElement.setAttribute("kind", "text");
@@ -78,6 +96,7 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
             }
 
             writeDocument(document, fileName);
+            LOG.info("Saved slide show '" + slideShow.id() + "' (" + slideShow.slides().size() + " slides) to " + fileName);
         } catch (ParserConfigurationException | TransformerException | IOException e) {
             throw new RuntimeException("Failed to persist slideshow to XML: " + fileName, e);
         }
