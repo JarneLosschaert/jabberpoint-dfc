@@ -28,7 +28,6 @@ public final class TocSlideFactory {
         return new Slide.Builder("Table of Contents")
                 .subject(Subject.of("Table of Contents"))
                 .items(items)
-                .tocPlaceholder()
                 .build();
     }
 }

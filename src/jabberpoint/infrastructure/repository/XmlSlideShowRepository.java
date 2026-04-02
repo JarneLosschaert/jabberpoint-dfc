@@ -71,7 +71,9 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         String title = parseShowTitle(presentationElement);
         List<Slide> slides = parseSlides(presentationElement);
 
-        return new SlideShow(slideShowId, title, slides);
+        return SlideShow.builder(slideShowId, title)
+                .slides(slides)
+                .build();
     }
 
     private String parseShowTitle(Element presentationElement) {

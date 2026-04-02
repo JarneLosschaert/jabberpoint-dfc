@@ -24,6 +24,30 @@ public final class SlideShow {
 		this.slides = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(slides, "slides must not be null")));
 	}
 
+	public static Builder builder(String id, String title) {
+		return new Builder(id, title);
+	}
+
+	public static final class Builder {
+		private final String id;
+		private final String title;
+		private List<Slide> slides = List.of();
+
+		public Builder(String id, String title) {
+			this.id = Objects.requireNonNull(id, "id must not be null").trim();
+			this.title = Objects.requireNonNull(title, "title must not be null").trim();
+		}
+
+		public Builder slides(List<Slide> slides) {
+			this.slides = Objects.requireNonNull(slides, "slides must not be null");
+			return this;
+		}
+
+		public SlideShow build() {
+			return new SlideShow(id, title, slides);
+		}
+	}
+
 	public String id() {
 		return id;
 	}

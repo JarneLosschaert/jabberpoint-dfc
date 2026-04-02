@@ -48,6 +48,8 @@ public final class InMemorySlideShowRepository implements SlideShowRepository {
 						.items(List.of(new TextItem(1, "Questions")))
 						.build());
 
-		return new SlideShow("demo", "Demo Slide Show", slides);
+		return SlideShow.builder("demo", "Demo Slide Show")
+				.slides(slides)
+				.build();
 	}
 }
