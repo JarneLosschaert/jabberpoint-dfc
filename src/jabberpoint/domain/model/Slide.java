@@ -1,85 +1,22 @@
 package jabberpoint.domain.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-public final class Slide {
-	private final String title;
-	private final Subject subject;
-	// For now: a simple boolean flag to indicate whether this slide is a
-	// placeholder for the table of contents. This can be changed later with
-	// explicit slide subtypes for types of slides.
-	private final boolean tableOfContentsPlaceholder;
-	private final List<SlideItem> items;
-
-	private Slide(String title, Subject subject, boolean tableOfContentsPlaceholder, List<SlideItem> items) {
-		String normalizedTitle = Objects.requireNonNull(title, "title must not be null").trim();
-		// For now: every slide has a title. This can be changed later with explicit
-		// slide subtypes for types of slides.
-		if (normalizedTitle.isEmpty()) {
-			throw new IllegalArgumentException("Slide title cannot be empty");
-		}
-		this.title = normalizedTitle;
-		this.subject = Objects.requireNonNull(subject, "subject must not be null");
-		this.tableOfContentsPlaceholder = tableOfContentsPlaceholder;
-		this.items = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(items, "items must not be null")));
-	}
-
-	public String title() {
-		return title;
-	}
-
-	public Subject subject() {
-		return subject;
-	}
-
-	public boolean isTableOfContentsPlaceholder() {
-		return tableOfContentsPlaceholder;
-	}
-
-	public List<SlideItem> items() {
-		return items;
-	}
-
-	/**
-	 * Builder for Slide. Use this instead of calling the constructor
-	 * directly. Only the title is mandatory; all other fields have sensible
-	 * defaults so that adding a new field in the future only
-	 * requires updating this builder, not every call site.
-	 */
-	public static final class Builder {
-		private final String title;
-		private Subject subject = Subject.unknown();
-		private boolean tableOfContentsPlaceholder = false;
-		private List<SlideItem> items = List.of();
-
-		public Builder(String title) {
-			this.title = Objects.requireNonNull(title, "title must not be null");
-		}
-
-		public Builder subject(Subject subject) {
-			this.subject = Objects.requireNonNull(subject, "subject must not be null");
-			return this;
-		}
-
-		public Builder items(List<SlideItem> items) {
-			this.items = Objects.requireNonNull(items, "items must not be null");
-			return this;
-		}
-
-		/**
-		 * Marks this slide as a table-of-contents placeholder. The slot will be
-		 * replaced by a generated TOC slide before the presentation starts.
-		 */
-		public Builder tocPlaceholder() {
-			this.tableOfContentsPlaceholder = true;
-			return this;
-		}
-
-		public Slide build() {
-			return new Slide(title, subject, tableOfContentsPlaceholder, items);
-		}
-	}
+/**
+ * A visual sheet in a slide show. Sealed so that exhaustive switch expressions
+ * can be written over all known slide types without a catch-all.
+ * <p>
+ * Known subtypes:
+ * <ul>
+ *   <li>{@link TitleSlide} – first slide showing the slide show title and meta information</li>
+ *   <li>{@link OrdinarySlide} – a standard content slide with a title and items</li>
+ *   <li>{@link TocSlide} – generated slide listing subject blocks</li>
+ *   <li>{@link TocMarkerSlide} – placeholder marking where a TOC slide is to be inserted</li>
+ *   <li>{@link SpecialSlide} – a slide that differs from ordinary slides (e.g. diagrams)</li>
+ * </ul>
+ */
+public sealed interface Slide permits TitleSlide, OrdinarySlide, TocSlide, TocMarkerSlide, SpecialSlide {
+	String title();
+	Subject subject();
+	List<SlideItem> items();
 }

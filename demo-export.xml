@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <presentation>
   <showtitle>Demo Slide Show</showtitle>
+  <slide kind="title">
+    <title>Demo Slide Show</title>
+    <subject>Introduction</subject>
+    <item kind="text" level="0">Stefano Igbinosun &amp; Jarne Losschaert</item>
+  </slide>
   <slide>
     <title>Welcome</title>
     <subject>Introduction</subject>
@@ -12,9 +17,8 @@
     <item kind="text" level="1">What we will build</item>
   </slide>
   <slide>
-    <title>TOC marker</title>
-    <subject>Introduction</subject>
-    <toc>true</toc>
+    <title>TOC Marker</title>
+    <toc/>
   </slide>
   <slide>
     <title>Architecture</title>

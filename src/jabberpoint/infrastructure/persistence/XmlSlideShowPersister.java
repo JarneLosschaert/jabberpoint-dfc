@@ -19,12 +19,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import jabberpoint.application.port.out.SlideShowPersister;
-import jabberpoint.domain.model.ImageItem;
+import jabberpoint.domain.model.FigureItem;
+import jabberpoint.domain.model.OrdinarySlide;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
+import jabberpoint.domain.model.SpecialSlide;
 import jabberpoint.domain.model.Subject;
 import jabberpoint.domain.model.TextItem;
+import jabberpoint.domain.model.TitleSlide;
+import jabberpoint.domain.model.TocMarkerSlide;
+import jabberpoint.domain.model.TocSlide;
 
 /**
  * Infrastructure concern: persisting a SlideShow to XML. Lives in the
@@ -74,28 +79,30 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                     slideElement.appendChild(subjectElement);
                 }
 
-                if (slide.isTableOfContentsPlaceholder()) {
-                    Element toc = document.createElement("toc");
-                    toc.setTextContent("true");
-                    slideElement.appendChild(toc);
-                }
-
-                for (SlideItem item : slide.items()) {
-                    Element itemElement = document.createElement("item");
-                    /*
-                     * Changed the if/else to switch expression, so when a new type of slide item is
-                     * added, it can be easily integrated. And so the error won't be silent if a new
-                     * type is added but not handled here.
-                     */
-                    switch (item) {
-                        case TextItem t -> {
-                            itemElement.setAttribute("kind", "text");
-                            itemElement.setAttribute("level", Integer.toString(t.level()));
-                        }
-                        case ImageItem _ -> itemElement.setAttribute("kind", "image");
+                /*
+                 * Use an exhaustive switch so that adding a new Slide subtype produces a
+                 * compile error here, forcing the author to decide how it should be persisted.
+                 */
+                switch (slide) {
+                    case TitleSlide ts -> {
+                        slideElement.setAttribute("kind", "title");
+                        appendItems(slideElement, ts.items(), document);
                     }
-                    itemElement.setTextContent(item.renderText());
-                    slideElement.appendChild(itemElement);
+                    case OrdinarySlide os -> {
+                        // "ordinary" is the default; omit the attribute for backward compatibility
+                        appendItems(slideElement, os.items(), document);
+                    }
+                    case SpecialSlide ss -> {
+                        slideElement.setAttribute("kind", "special");
+                        appendItems(slideElement, ss.items(), document);
+                    }
+                    case TocMarkerSlide _ -> {
+                        Element toc = document.createElement("toc");
+                        slideElement.appendChild(toc);
+                    }
+                    case TocSlide _ -> {
+                        // Generated; not persisted — the TOC is derived from the source slides
+                    }
                 }
 
                 presentation.appendChild(slideElement);
@@ -118,6 +125,25 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
 
         try (FileOutputStream outputStream = new FileOutputStream(new File(fileName))) {
             transformer.transform(new DOMSource(document), new StreamResult(outputStream));
+        }
+    }
+
+    private void appendItems(Element slideElement, java.util.List<SlideItem> items, Document document) {
+        for (SlideItem item : items) {
+            Element itemElement = document.createElement("item");
+            /*
+             * Exhaustive switch: adding a new SlideItem subtype produces a compile error,
+             * forcing the author to decide how it should be serialised.
+             */
+            switch (item) {
+                case TextItem t -> {
+                    itemElement.setAttribute("kind", "text");
+                    itemElement.setAttribute("level", Integer.toString(t.level()));
+                }
+                case FigureItem _ -> itemElement.setAttribute("kind", "image");
+            }
+            itemElement.setTextContent(item.renderText());
+            slideElement.appendChild(itemElement);
         }
     }
 }

@@ -11,9 +11,10 @@ import jabberpoint.application.port.in.BuildSlideShowWithTocUseCase;
 import jabberpoint.application.port.out.SlideShowRepository;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideShow;
+import jabberpoint.domain.model.TocMarkerSlide;
+import jabberpoint.domain.model.TocSlide;
 import jabberpoint.domain.toc.TocEntry;
 import jabberpoint.domain.toc.TocGenerator;
-import jabberpoint.domain.toc.TocSlideFactory;
 
 /*
  * Application service for building a table of contents for a slide show. This
@@ -56,13 +57,13 @@ public final class TocApplicationService implements BuildTocUseCase, BuildSlideS
 		List<TocEntry> entries = tocGenerator.generate(originalSlides);
 		List<Slide> newSlides = new ArrayList<>();
 		for (Slide slide : originalSlides) {
-			if (slide.isTableOfContentsPlaceholder()) {
-				newSlides.add(TocSlideFactory.create(entries));
+			if (slide instanceof TocMarkerSlide) {
+				newSlides.add(new TocSlide(entries));
 			} else {
 				newSlides.add(slide);
 			}
 		}
-		long replacedCount = originalSlides.stream().filter(Slide::isTableOfContentsPlaceholder).count();
+		long replacedCount = originalSlides.stream().filter(s -> s instanceof TocMarkerSlide).count();
 		LOG.info("Built slide show '" + slideShowId + "' with " + replacedCount + " TOC placeholder(s) replaced");
 		return Optional.of(original.withSlides(newSlides));
 	}

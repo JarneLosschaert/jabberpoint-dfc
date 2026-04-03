@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!ELEMENT presentation (showtitle?, slide+)>
 <!ELEMENT showtitle (#PCDATA)>
-<!ELEMENT slide (title, subject?, item*, toc?)>
+<!ELEMENT slide (title?, subject?, item*, toc?)>
+<!ATTLIST slide
+    kind CDATA #IMPLIED>
 <!ELEMENT title (#PCDATA)>
 <!ELEMENT subject (#PCDATA)>
 <!ELEMENT item (#PCDATA)>

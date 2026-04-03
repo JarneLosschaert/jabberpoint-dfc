@@ -5,6 +5,6 @@ package jabberpoint.domain.model;
  * added, it can be easily integrated and used in a switch.
  */
 
-public sealed interface SlideItem permits TextItem, ImageItem {
+public sealed interface SlideItem permits TextItem, FigureItem {
 	String renderText();
 }

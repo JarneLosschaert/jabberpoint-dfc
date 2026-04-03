@@ -2,6 +2,11 @@
 <!DOCTYPE presentation SYSTEM "jabberpoint.dtd">
 <presentation>
   <showtitle>Demo Slide Show</showtitle>
+  <slide kind="title">
+    <title>Demo Slide Show</title>
+    <subject>Introduction</subject>
+    <item kind="text" level="0">Stefano Igbinosun &amp; Jarne Losschaert</item>
+  </slide>
   <slide>
     <title>Welcome</title>
     <subject>Introduction</subject>
@@ -13,9 +18,7 @@
     <item kind="text" level="1">What we will build</item>
   </slide>
   <slide>
-    <title>TOC marker</title>
-    <subject>Introduction</subject>
-    <toc>true</toc>
+    <toc/>
   </slide>
   <slide>
     <title>Architecture</title>

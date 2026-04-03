@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.Subject;
+import jabberpoint.domain.model.TocMarkerSlide;
+import jabberpoint.domain.model.TocSlide;
 
 public final class ConsecutiveSubjectTocGenerator implements TocGenerator {
 	@Override
@@ -17,9 +19,9 @@ public final class ConsecutiveSubjectTocGenerator implements TocGenerator {
 
 		for (int index = 0; index < safeSlides.size(); index++) {
 			Slide slide = safeSlides.get(index);
-			// Placeholder toc slides are insertion markers and should never appear as TOC
-			// content. Will be removed later.
-			if (slide.isTableOfContentsPlaceholder()) {
+			// TOC marker and generated TOC slides are structural, not content;
+			// they must not appear as entries in the table of contents.
+			if (slide instanceof TocMarkerSlide || slide instanceof TocSlide) {
 				continue;
 			}
 

@@ -17,12 +17,16 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import jabberpoint.application.port.out.SlideShowRepository;
-import jabberpoint.domain.model.ImageItem;
+import jabberpoint.domain.model.FigureItem;
+import jabberpoint.domain.model.OrdinarySlide;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
+import jabberpoint.domain.model.SpecialSlide;
 import jabberpoint.domain.model.Subject;
 import jabberpoint.domain.model.TextItem;
+import jabberpoint.domain.model.TitleSlide;
+import jabberpoint.domain.model.TocMarkerSlide;
 
 /**
  * Infrastructure concern: loading a SlideShow from XML. Lives in the
@@ -98,15 +102,21 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
     }
 
     private Slide parseSlide(Element slideElement) {
+        // TOC markers are detected first — they need no title, subject, or items.
+        if (parseTocMarker(slideElement)) {
+            return new TocMarkerSlide();
+        }
+
         String title = parseTitle(slideElement);
         Subject subject = parseSubject(slideElement);
         List<SlideItem> items = parseItems(slideElement);
+        String kind = slideElement.getAttribute("kind");
 
-        Slide.Builder builder = new Slide.Builder(title).subject(subject).items(items);
-        if (parseTocPlaceholder(slideElement)) {
-            builder.tocPlaceholder();
-        }
-        return builder.build();
+        return switch (kind) {
+            case "title"   -> new TitleSlide(title, subject, items);
+            case "special" -> new SpecialSlide(title, subject, items);
+            default        -> new OrdinarySlide(title, subject, items); // "ordinary" or absent
+        };
     }
 
     private String parseTitle(Element slideElement) {
@@ -127,10 +137,8 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         return Subject.unknown();
     }
 
-    private boolean parseTocPlaceholder(Element slideElement) {
-        NodeList tocNodes = slideElement.getElementsByTagName("toc");
-        return tocNodes.getLength() > 0
-                && "true".equalsIgnoreCase(tocNodes.item(0).getTextContent().trim());
+    private boolean parseTocMarker(Element slideElement) {
+        return slideElement.getElementsByTagName("toc").getLength() > 0;
     }
 
     private List<SlideItem> parseItems(Element slideElement) {
@@ -153,7 +161,7 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
             int level = parseLevel(itemElement);
             return new TextItem(level, content);
         } else if ("image".equals(kind)) {
-            return new ImageItem(content);
+            return new FigureItem(content);
         } else {
             LOG.warning("Unknown item kind '" + kind + "'; treating as plain text at level 0");
             return new TextItem(0, content);
