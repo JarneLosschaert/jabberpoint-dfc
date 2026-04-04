@@ -20,7 +20,9 @@ import org.w3c.dom.Element;
 
 import jabberpoint.application.port.out.SlideShowPersister;
 import jabberpoint.domain.model.FigureItem;
+import jabberpoint.domain.model.ListItem;
 import jabberpoint.domain.model.OrdinarySlide;
+import jabberpoint.domain.model.PositionItem;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
@@ -87,6 +89,16 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                     case TitleSlide ts -> {
                         slideElement.setAttribute("kind", "title");
                         appendItems(slideElement, ts.items(), document);
+                        if (ts.presenterName() != null && !ts.presenterName().isEmpty()) {
+                            Element presenter = document.createElement("presenter");
+                            presenter.setTextContent(ts.presenterName());
+                            slideElement.appendChild(presenter);
+                        }
+                        if (ts.date() != null && !ts.date().isEmpty()) {
+                            Element date = document.createElement("date");
+                            date.setTextContent(ts.date());
+                            slideElement.appendChild(date);
+                        }
                     }
                     case OrdinarySlide os -> {
                         // "ordinary" is the default; omit the attribute for backward compatibility
@@ -141,6 +153,15 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                     itemElement.setAttribute("level", Integer.toString(t.level()));
                 }
                 case FigureItem _ -> itemElement.setAttribute("kind", "image");
+                case ListItem _ -> itemElement.setAttribute("kind", "list");
+                case PositionItem p -> {
+                    itemElement.setAttribute("kind", "position");
+                    itemElement.setAttribute("x", Integer.toString(p.x()));
+                    itemElement.setAttribute("y", Integer.toString(p.y()));
+                    if (p.level() > 0) {
+                        itemElement.setAttribute("level", Integer.toString(p.level()));
+                    }
+                }
             }
             itemElement.setTextContent(item.renderText());
             slideElement.appendChild(itemElement);

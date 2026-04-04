@@ -5,7 +5,8 @@
   <slide kind="title">
     <title>Demo Slide Show</title>
     <subject>Introduction</subject>
-    <item kind="text" level="0">Stefano Igbinosun &amp; Jarne Losschaert</item>
+    <presenter>Stefano Igbinosun &amp; Jarne Losschaert</presenter>
+    <date>2026-04-04</date>
   </slide>
   <slide>
     <title>Welcome</title>
@@ -23,7 +24,14 @@
   <slide>
     <title>Architecture</title>
     <subject>Architecture</subject>
-    <item kind="text" level="1">Onion architecture in layers</item>
+    <item kind="list">Onion architecture in layers
+Layered dependencies
+Separation of concerns</item>
+  </slide>
+  <slide>
+    <title>Positioned Note</title>
+    <subject>Architecture</subject>
+    <item kind="position" x="40" y="120">Fixed position note</item>
   </slide>
   <slide>
     <title>Wrap-up</title>

@@ -18,7 +18,9 @@ import org.xml.sax.SAXException;
 
 import jabberpoint.application.port.out.SlideShowRepository;
 import jabberpoint.domain.model.FigureItem;
+import jabberpoint.domain.model.ListItem;
 import jabberpoint.domain.model.OrdinarySlide;
+import jabberpoint.domain.model.PositionItem;
 import jabberpoint.domain.model.Slide;
 import jabberpoint.domain.model.SlideItem;
 import jabberpoint.domain.model.SlideShow;
@@ -113,7 +115,12 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         String kind = slideElement.getAttribute("kind");
 
         return switch (kind) {
-            case "title"   -> new TitleSlide(title, subject, items);
+            case "title"   -> TitleSlide.builder(title)
+                    .subject(subject)
+                    .items(items)
+                    .presenterName(parsePresenterName(slideElement))
+                    .date(parseDate(slideElement))
+                    .build();
             case "special" -> new SpecialSlide(title, subject, items);
             default        -> new OrdinarySlide(title, subject, items); // "ordinary" or absent
         };
@@ -141,6 +148,22 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         return slideElement.getElementsByTagName("toc").getLength() > 0;
     }
 
+    private String parsePresenterName(Element slideElement) {
+        NodeList presenterNodes = slideElement.getElementsByTagName("presenter");
+        if (presenterNodes.getLength() > 0) {
+            return presenterNodes.item(0).getTextContent().trim();
+        }
+        return null;
+    }
+
+    private String parseDate(Element slideElement) {
+        NodeList dateNodes = slideElement.getElementsByTagName("date");
+        if (dateNodes.getLength() > 0) {
+            return dateNodes.item(0).getTextContent().trim();
+        }
+        return null;
+    }
+
     private List<SlideItem> parseItems(Element slideElement) {
         List<SlideItem> items = new ArrayList<>();
         NodeList itemNodes = slideElement.getElementsByTagName("item");
@@ -162,10 +185,26 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
             return new TextItem(level, content);
         } else if ("image".equals(kind)) {
             return new FigureItem(content);
+        } else if ("list".equals(kind)) {
+            return parseListItem(content);
+        } else if ("position".equals(kind)) {
+            return parsePositionItem(itemElement, content);
         } else {
             LOG.warning("Unknown item kind '" + kind + "'; treating as plain text at level 0");
             return new TextItem(0, content);
         }
+    }
+
+    private ListItem parseListItem(String content) {
+        List<TextItem> entries = new ArrayList<>();
+        content.lines()
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .forEach(line -> entries.add(new TextItem(0, line)));
+        if (entries.isEmpty()) {
+            throw new IllegalArgumentException("List item must contain at least one entry");
+        }
+        return new ListItem(entries);
     }
 
     private int parseLevel(Element itemElement) {
@@ -179,5 +218,26 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
             }
         }
         return 0;
+    }
+
+    private PositionItem parsePositionItem(Element itemElement, String content) {
+        int x = parseCoordinate(itemElement, "x");
+        int y = parseCoordinate(itemElement, "y");
+        int level = parseLevel(itemElement);
+        return new PositionItem(x, y, level, content);
+    }
+
+    private int parseCoordinate(Element itemElement, String attributeName) {
+        String value = itemElement.getAttribute(attributeName);
+        if (value == null || value.isEmpty()) {
+            LOG.warning("Position item missing '" + attributeName + "' attribute; defaulting to 0");
+            return 0;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            LOG.warning("Invalid position value '" + value + "' for attribute '" + attributeName + "'; defaulting to 0");
+            return 0;
+        }
     }
 }

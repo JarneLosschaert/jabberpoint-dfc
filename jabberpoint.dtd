@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!ELEMENT presentation (showtitle?, slide+)>
 <!ELEMENT showtitle (#PCDATA)>
-<!ELEMENT slide (title?, subject?, item*, toc?)>
+<!ELEMENT slide (title?, subject?, presenter?, date?, item*, toc?)>
 <!ATTLIST slide
     kind CDATA #IMPLIED>
 <!ELEMENT title (#PCDATA)>
 <!ELEMENT subject (#PCDATA)>
+<!ELEMENT presenter (#PCDATA)>
+<!ELEMENT date (#PCDATA)>
 <!ELEMENT item (#PCDATA)>
 <!ATTLIST item
     kind CDATA #REQUIRED
-    level CDATA #IMPLIED>
+    level CDATA #IMPLIED
+    x CDATA #IMPLIED
+    y CDATA #IMPLIED>
 <!ELEMENT toc (#PCDATA)>
