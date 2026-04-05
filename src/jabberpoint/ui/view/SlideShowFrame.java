@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
@@ -48,6 +49,7 @@ public class SlideShowFrame extends JFrame {
     private final JLabel subjectLabel;
     private final JPanel itemsPanel;
     private final JLabel slideNumberLabel;
+    private final JTextField goToSlideField;
 
     public SlideShowFrame(SlideShow slideShow) {
         super("JabberPoint - " + slideShow.title());
@@ -72,17 +74,26 @@ public class SlideShowFrame extends JFrame {
         add(new JScrollPane(itemsPanel), BorderLayout.CENTER);
 
         // Bottom panel for navigation
-        setupKeyBindings();
         JPanel bottomPanel = new JPanel(new FlowLayout());
         JButton prevButton = new JButton("Previous");
         prevButton.addActionListener(e -> showPreviousSlide());
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(e -> showNextSlide());
         slideNumberLabel = new JLabel();
+        goToSlideField = new JTextField(5);
+        goToSlideField.setToolTipText("Enter slide number (1-" + slideShow.slides().size() + ")");
+        JButton goToButton = new JButton("Enter");
+        goToButton.addActionListener(e -> goToSlide());
         bottomPanel.add(prevButton);
         bottomPanel.add(slideNumberLabel);
         bottomPanel.add(nextButton);
+        bottomPanel.add(new JLabel(" | Go to slide: "));
+        bottomPanel.add(goToSlideField);
+        bottomPanel.add(goToButton);
         add(bottomPanel, BorderLayout.SOUTH);
+
+        // Setup key bindings after all UI components are initialized (to ensure goToSlideField is ready) app wont crash if user tries to use arrow keys before clicking on goToSlideField for the first time
+        setupKeyBindings();
 
         displaySlide(currentSlideIndex);
     }
@@ -223,10 +234,10 @@ public class SlideShowFrame extends JFrame {
         itemsPanel.setPreferredSize(new Dimension(760, Math.max(currentY, 200)));
     }
 
-    /** Renders a title slide: presenter name and date as meta info, then regular items. */
+    
     private void renderTitleSlide(TitleSlide slide) {
         int currentY = 0;
-
+        /** Renders a title slide: presenter name and date as meta info. */
         // Presenter name
         if (slide.presenterName() != null && !slide.presenterName().isEmpty()) {
             JLabel label = new JLabel("Presenter: " + slide.presenterName());
@@ -304,6 +315,24 @@ public class SlideShowFrame extends JFrame {
         }
     }
 
+    private void goToSlide() {
+        try {
+            String input = goToSlideField.getText().trim();
+            if (input.isEmpty()) {
+                return; // Silently ignore empty input
+            }
+            int slideNumber = Integer.parseInt(input);
+            if (slideNumber < 1 || slideNumber > slideShow.slides().size()) {
+                goToSlideField.setText("");
+                return; // Silently ignore out-of-range numbers
+            }
+            displaySlide(slideNumber - 1); // Convert 1-based to 0-based index
+            goToSlideField.setText(""); // Clear field after successful navigation
+        } catch (NumberFormatException e) {
+            goToSlideField.setText(""); // Clear on invalid input
+        }
+    }
+
     private void setupKeyBindings() {
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getRootPane().getActionMap();
@@ -327,5 +356,8 @@ public class SlideShowFrame extends JFrame {
                 showNextSlide();
             }
         });
+
+        // Enter key in goToSlideField triggers navigation
+        goToSlideField.addActionListener(e -> goToSlide());
     }
 }

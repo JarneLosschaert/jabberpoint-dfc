@@ -12,6 +12,9 @@ public final class TextItem implements SlideItem {
 		}
 		this.level = level;
 		this.text = Objects.requireNonNull(text, "text must not be null").trim();
+		if (this.text.isEmpty()) {
+			throw new IllegalArgumentException("Text item text cannot be empty");
+		}
 	}
 
 	public int level() {
