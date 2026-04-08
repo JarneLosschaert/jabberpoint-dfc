@@ -36,9 +36,6 @@ pom.xml.asc
 
 # Misc
 *.log
-.classpath
-.project
-.settings/
 *.iml
 
 # Bin

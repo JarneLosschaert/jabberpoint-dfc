@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
-//import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
@@ -43,8 +42,7 @@ public class SlideShowFrame extends JFrame {
     private static final Color ACTIVE_SECTION_COLOR = new Color(0, 100, 200);
     private static final Color INACTIVE_SECTION_COLOR = Color.DARK_GRAY;
 
-    private final SlideShow slideShow;
-    private int currentSlideIndex = 0;
+    private SlideShow slideShow;
     private final JLabel titleLabel;
     private final JLabel subjectLabel;
     private final JPanel itemsPanel;
@@ -53,7 +51,7 @@ public class SlideShowFrame extends JFrame {
 
     public SlideShowFrame(SlideShow slideShow) {
         super("JabberPoint - " + slideShow.title());
-        this.slideShow = slideShow;
+        this.slideShow = slideShow.start();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
@@ -92,33 +90,31 @@ public class SlideShowFrame extends JFrame {
         bottomPanel.add(goToButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // Setup key bindings after all UI components are initialized (to ensure goToSlideField is ready) app wont crash if user tries to use arrow keys before clicking on goToSlideField for the first time
+        // Setup key bindings after all UI components are initialized
         setupKeyBindings();
 
-        displaySlide(currentSlideIndex);
+        displayCurrentSlide();
     }
 
-    private void displaySlide(int index) {
-        if (index < 0 || index >= slideShow.slides().size()) {
-            return;
-        }
-        currentSlideIndex = index;
-        Slide slide = slideShow.slides().get(index);
-        titleLabel.setText(slide.title());
-        subjectLabel.setText(slide.subject().value());
-        itemsPanel.removeAll();
+    private void displayCurrentSlide() {
+        slideShow.currentSlide().ifPresent(slide -> {
+            int index = slideShow.currentSlideIndex();
+            titleLabel.setText(slide.title());
+            subjectLabel.setText(slide.subject().value());
+            itemsPanel.removeAll();
 
-        switch (slide) {
-            case TocSlide toc   -> renderTocItems(toc, findActiveSubject(index));
-            case TitleSlide ts  -> renderTitleSlide(ts);
-            case OrdinarySlide os -> renderRegularItems(os);
-            case SpecialSlide ss  -> renderRegularItems(ss);
-            case TocMarkerSlide _ -> { /* placeholder — should have been replaced before display */ }
-        }
+            switch (slide) {
+                case TocSlide toc   -> renderTocItems(toc, findActiveSubject(index));
+                case TitleSlide ts  -> renderTitleSlide(ts);
+                case OrdinarySlide os -> renderRegularItems(os);
+                case SpecialSlide ss  -> renderRegularItems(ss);
+                case TocMarkerSlide ignored -> { /* placeholder — should have been replaced before display */ }
+            }
 
-        slideNumberLabel.setText("Slide " + (index + 1) + " of " + slideShow.slides().size());
-        itemsPanel.revalidate();
-        itemsPanel.repaint();
+            slideNumberLabel.setText("Slide " + (index + 1) + " of " + slideShow.slides().size());
+            itemsPanel.revalidate();
+            itemsPanel.repaint();
+        });
     }
 
     /**
@@ -171,7 +167,7 @@ public class SlideShowFrame extends JFrame {
                         currentY += size.height + 2;
                     }
                 }
-                case FigureItem _ -> { /* TOC slides contain only text items */ }
+                case FigureItem ignored -> { /* TOC slides contain only text items */ }
                 case PositionItem positionItem -> {
                     JLabel label = new JLabel(positionItem.text(), SwingConstants.LEFT);
                     label.setFont(tocFont);
@@ -235,9 +231,9 @@ public class SlideShowFrame extends JFrame {
     }
 
     
+    /** Renders a title slide: presenter name and date as meta info. */
     private void renderTitleSlide(TitleSlide slide) {
         int currentY = 0;
-        /** Renders a title slide: presenter name and date as meta info. */
         // Presenter name
         if (slide.presenterName() != null && !slide.presenterName().isEmpty()) {
             JLabel label = new JLabel("Presenter: " + slide.presenterName());
@@ -304,14 +300,16 @@ public class SlideShowFrame extends JFrame {
     }
 
     private void showPreviousSlide() {
-        if (currentSlideIndex > 0) {
-            displaySlide(currentSlideIndex - 1);
+        if (slideShow.isShowingSlide() && slideShow.currentSlideIndex() > 0) {
+            slideShow = slideShow.showPreviousSlide();
+            displayCurrentSlide();
         }
     }
 
     private void showNextSlide() {
-        if (currentSlideIndex < slideShow.slides().size() - 1) {
-            displaySlide(currentSlideIndex + 1);
+        if (slideShow.isShowingSlide() && slideShow.currentSlideIndex() < slideShow.slides().size() - 1) {
+            slideShow = slideShow.showNextSlide();
+            displayCurrentSlide();
         }
     }
 
@@ -319,17 +317,18 @@ public class SlideShowFrame extends JFrame {
         try {
             String input = goToSlideField.getText().trim();
             if (input.isEmpty()) {
-                return; // Silently ignore empty input
+                return;
             }
             int slideNumber = Integer.parseInt(input);
             if (slideNumber < 1 || slideNumber > slideShow.slides().size()) {
                 goToSlideField.setText("");
-                return; // Silently ignore out-of-range numbers
+                return;
             }
-            displaySlide(slideNumber - 1); // Convert 1-based to 0-based index
-            goToSlideField.setText(""); // Clear field after successful navigation
-        } catch (NumberFormatException e) {
-            goToSlideField.setText(""); // Clear on invalid input
+            slideShow = slideShow.goToSlide(slideNumber);
+            displayCurrentSlide();
+            goToSlideField.setText("");
+        } catch (NumberFormatException | IllegalStateException e) {
+            goToSlideField.setText("");
         }
     }
 

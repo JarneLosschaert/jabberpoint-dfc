@@ -108,11 +108,11 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                         slideElement.setAttribute("kind", "special");
                         appendItems(slideElement, ss.items(), document);
                     }
-                    case TocMarkerSlide _ -> {
+                    case TocMarkerSlide ignored -> {
                         Element toc = document.createElement("toc");
                         slideElement.appendChild(toc);
                     }
-                    case TocSlide _ -> {
+                    case TocSlide ignored -> {
                         // Generated; not persisted — the TOC is derived from the source slides
                     }
                 }
@@ -152,8 +152,8 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                     itemElement.setAttribute("kind", "text");
                     itemElement.setAttribute("level", Integer.toString(t.level()));
                 }
-                case FigureItem _ -> itemElement.setAttribute("kind", "image");
-                case ListItem _ -> itemElement.setAttribute("kind", "list");
+                case FigureItem ignored -> itemElement.setAttribute("kind", "image");
+                case ListItem ignored -> itemElement.setAttribute("kind", "list");
                 case PositionItem p -> {
                     itemElement.setAttribute("kind", "position");
                     itemElement.setAttribute("x", Integer.toString(p.x()));

@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import jabberpoint.application.port.in.BuildTocUseCase;
 import jabberpoint.application.port.in.BuildSlideShowWithTocUseCase;
 import jabberpoint.application.port.out.SlideShowRepository;
 import jabberpoint.domain.model.Slide;
@@ -17,13 +16,13 @@ import jabberpoint.domain.toc.TocEntry;
 import jabberpoint.domain.toc.TocGenerator;
 
 /*
- * Application service for building a table of contents for a slide show. This
- * service orchestrates the use case by retrieving the slide show from the
+ * Application service for building a slide show with a table of contents.
+ * This service orchestrates the use case by retrieving the slide show from the
  * repository and delegating the TOC generation to a domain service. The
  * application service does not contain any business logic itself, but coordinates
  * the interaction between the domain and infrastructure layers.
 */
-public final class TocApplicationService implements BuildTocUseCase, BuildSlideShowWithTocUseCase {
+public final class TocApplicationService implements BuildSlideShowWithTocUseCase {
 
 	private static final Logger LOG = Logger.getLogger(TocApplicationService.class.getName());
 
@@ -33,15 +32,6 @@ public final class TocApplicationService implements BuildTocUseCase, BuildSlideS
 	public TocApplicationService(SlideShowRepository slideShowRepository, TocGenerator tocGenerator) {
 		this.slideShowRepository = Objects.requireNonNull(slideShowRepository, "slideShowRepository");
 		this.tocGenerator = Objects.requireNonNull(tocGenerator, "tocGenerator");
-	}
-
-	@Override
-	public List<TocEntry> buildFor(String slideShowId) {
-		// Application orchestration only: fetch aggregate and delegate TOC policy to domain service.
-		LOG.info("Building TOC for slide show '" + slideShowId + "'");
-		SlideShow slideShow = slideShowRepository.findById(slideShowId)
-				.orElseThrow(() -> new IllegalArgumentException("Unknown slide show id: " + slideShowId));
-		return tocGenerator.generate(slideShow.slides());
 	}
 
 	@Override

@@ -1,22 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE presentation SYSTEM "jabberpoint.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <presentation>
   <showtitle>JabberPoint Feature Demo</showtitle>
-
-  <!-- Title Slide -->
   <slide kind="title">
     <title>JabberPoint Feature Demo</title>
     <subject>Introductie</subject>
     <presenter>Stefano Igbinosun &amp; Jarne Losschaert</presenter>
     <date>2026-04-07</date>
   </slide>
-
-  <!-- Table of Contents (auto-generated) -->
   <slide>
-    <toc />
+    <title>TOC Marker</title>
+    <toc/>
   </slide>
-
-  <!-- Introduction slides -->
   <slide>
     <title>Welkom bij JabberPoint</title>
     <subject>Introductie</subject>
@@ -28,7 +22,6 @@
     <item kind="text" level="2">Vorige slide: Pijl omhoog</item>
     <item kind="text" level="2">Ga naar slide: Voer nummer in en druk Enter</item>
   </slide>
-
   <slide>
     <title>Overzicht van de presentatie</title>
     <subject>Introductie</subject>
@@ -38,8 +31,6 @@
     <item kind="text" level="2">Onderwerp-blokken en herhaalde onderwerpen</item>
     <item kind="text" level="2">Items: tekst, lijsten, posities en afbeeldingen</item>
   </slide>
-
-  <!-- Architecture slides -->
   <slide>
     <title>Architectuur</title>
     <subject>Architectuur</subject>
@@ -47,15 +38,13 @@
     <item kind="text" level="2">Domein is onafhankelijk van infrastructuur en UI</item>
     <item kind="text" level="2">Ports &amp; Adapters voor flexibiliteit</item>
   </slide>
-
   <slide>
     <title>Lagen van het systeem</title>
     <subject>Architectuur</subject>
     <item kind="list">Domeinlaag: entiteiten, value objects, domeinregels Applicatielaag: use cases,
-      services, ports Infrastructuurlaag: XML persistentie, repositories UI-laag: Swing frames,
-      controllers</item>
+services, ports Infrastructuurlaag: XML persistentie, repositories UI-laag: Swing frames,
+controllers</item>
   </slide>
-
   <slide>
     <title>Onion Architecture</title>
     <subject>Architectuur</subject>
@@ -64,8 +53,6 @@
     <item kind="text" level="2">Objectcreatie is gescheiden van gebruik</item>
     <item kind="text" level="2">Interfaces definiëren grenzen tussen lagen</item>
   </slide>
-
-  <!-- TOC Feature slides -->
   <slide>
     <title>De Inhoudsopgave Feature</title>
     <subject>Inhoudsopgave</subject>
@@ -74,7 +61,6 @@
     <item kind="text" level="2">Opeenvolgende slides met hetzelfde onderwerp vormen een blok</item>
     <item kind="text" level="2">De TOC wordt dynamisch gegenereerd bij het laden</item>
   </slide>
-
   <slide>
     <title>TOC Regels</title>
     <subject>Inhoudsopgave</subject>
@@ -84,22 +70,18 @@
     <item kind="text" level="2">Slide zonder onderwerp = standaard onderwerp</item>
     <item kind="text" level="2">TOC marker slides worden niet meegeteld</item>
   </slide>
-
-  <!-- Second TOC to demonstrate repeated TOC insertion -->
   <slide>
-    <toc />
+    <title>TOC Marker</title>
+    <toc/>
   </slide>
-
-  <!-- Design Patterns slides -->
   <slide>
     <title>Gebruikte Patterns</title>
     <subject>Design Patterns</subject>
     <item kind="text" level="1">Overzicht van toegepaste design patterns:</item>
     <item kind="list">Strategy Pattern: TocGenerator Repository Pattern: SlideShowRepository Builder
-      Pattern: SlideShow, TitleSlide, OrdinarySlide Ports &amp; Adapters: inbound en outbound ports
-      Value Object: Subject, TocEntry</item>
+Pattern: SlideShow, TitleSlide, OrdinarySlide Ports &amp; Adapters: inbound en outbound ports
+Value Object: Subject, TocEntry</item>
   </slide>
-
   <slide>
     <title>Sealed Interfaces</title>
     <subject>Design Patterns</subject>
@@ -109,8 +91,6 @@
     <item kind="text" level="2">SlideItem: TextItem, FigureItem, ListItem, PositionItem</item>
     <item kind="text" level="2">Compiler dwingt af dat alle types behandeld worden</item>
   </slide>
-
-  <!-- Return to Architecture to demonstrate repeated subject in TOC -->
   <slide>
     <title>Terug naar Architectuur</title>
     <subject>Architectuur</subject>
@@ -118,8 +98,6 @@
     <item kind="text" level="2">Omdat er een ander onderwerp tussen zat</item>
     <item kind="text" level="2">Conform de Repeated Subject Rule</item>
   </slide>
-
-  <!-- Positioned item demo -->
   <slide>
     <title>Positie Items</title>
     <subject>Item Types</subject>
@@ -127,16 +105,12 @@
     <item kind="position" x="40" y="80">Dit item staat op positie (40, 80)</item>
     <item kind="position" x="200" y="140">En dit op positie (200, 140)</item>
   </slide>
-
-  <!-- Slide without subject to demonstrate default -->
   <slide>
     <title>Slide Zonder Onderwerp</title>
     <item kind="text" level="1">Deze slide heeft geen onderwerp in de XML</item>
     <item kind="text" level="2">Het systeem geeft automatisch het standaard onderwerp</item>
     <item kind="text" level="2">"Onbekend onderwerp" wordt gebruikt in de inhoudsopgave</item>
   </slide>
-
-  <!-- Wrap-up -->
   <slide>
     <title>Samenvatting</title>
     <subject>Afsluiting</subject>
@@ -147,7 +121,6 @@
     <item kind="text" level="2">Herhaalde en ontbrekende onderwerpen</item>
     <item kind="text" level="2">Meerdere item types: tekst, lijst, positie</item>
   </slide>
-
   <slide>
     <title>Einde</title>
     <subject>Afsluiting</subject>
