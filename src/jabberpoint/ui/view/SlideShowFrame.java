@@ -37,6 +37,7 @@ import jabberpoint.domain.model.TextItem;
 import jabberpoint.domain.model.TitleSlide;
 import jabberpoint.domain.model.TocMarkerSlide;
 import jabberpoint.domain.model.TocSlide;
+import jabberpoint.domain.toc.TocEntry;
 
 public class SlideShowFrame extends JFrame {
     private static final Color ACTIVE_SECTION_COLOR = new Color(0, 100, 200);
@@ -144,50 +145,25 @@ public class SlideShowFrame extends JFrame {
         Font tocFont = new Font(Font.SANS_SERIF, Font.PLAIN, 18);
         Font activeTocFont = tocFont.deriveFont(Font.BOLD);
 
-        for (SlideItem item : slide.items()) {
-            switch (item) {
-                case TextItem textItem -> {
-                    boolean isActive = textItem.text().endsWith(activeSubject.value());
-                    JLabel label = new JLabel(textItem.text(), SwingConstants.LEFT);
-                    label.setFont(isActive ? activeTocFont : tocFont);
-                    label.setForeground(isActive ? ACTIVE_SECTION_COLOR : INACTIVE_SECTION_COLOR);
-                    label.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
-                    Dimension size = label.getPreferredSize();
-                    addComponent(label, 20, currentY, 720, size.height);
-                    currentY += size.height + 4;
-                }
-                case ListItem listItem -> {
-                    for (TextItem entry : listItem.entries()) {
-                        JLabel label = new JLabel("• " + entry.text(), SwingConstants.LEFT);
-                        label.setFont(tocFont);
-                        label.setForeground(INACTIVE_SECTION_COLOR);
-                        label.setBorder(BorderFactory.createEmptyBorder(2, 32, 2, 16));
-                        Dimension size = label.getPreferredSize();
-                        addComponent(label, 20, currentY, 720, size.height);
-                        currentY += size.height + 2;
-                    }
-                }
-                case FigureItem ignored -> { /* TOC slides contain only text items */ }
-                case PositionItem positionItem -> {
-                    JLabel label = new JLabel(positionItem.text(), SwingConstants.LEFT);
-                    label.setFont(tocFont);
-                    label.setForeground(INACTIVE_SECTION_COLOR);
-                    label.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
-                    Dimension size = label.getPreferredSize();
-                    addComponent(label, positionItem.x(), positionItem.y(), 720, size.height);
-                    currentY = Math.max(currentY, positionItem.y() + size.height + 4);
-                }
-            }
+        for (TocEntry entry : slide.entries()) {
+            boolean isActive = entry.subject().equals(activeSubject);
+            String text = entry.slideNumber() + ". " + entry.subject().value();
+            JLabel label = new JLabel(text, SwingConstants.LEFT);
+            label.setFont(isActive ? activeTocFont : tocFont);
+            label.setForeground(isActive ? ACTIVE_SECTION_COLOR : INACTIVE_SECTION_COLOR);
+            label.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
+            Dimension size = label.getPreferredSize();
+            addComponent(label, 20, currentY, 720, size.height);
+            currentY += size.height + 4;
         }
 
         itemsPanel.setPreferredSize(new Dimension(760, Math.max(currentY, 200)));
     }
 
-    /** Renders a regular (non-TOC) slide: text with indentation levels, images. */
-    private void renderRegularItems(Slide slide) {
-        int currentY = 0;
-
-        for (SlideItem item : slide.items()) {
+    /** Renders a list of slide items starting at the given Y offset; returns the new Y offset. */
+    private int renderItemList(List<SlideItem> items, int startY) {
+        int currentY = startY;
+        for (SlideItem item : items) {
             switch (item) {
                 case TextItem textItem -> {
                     String indent = "  ".repeat(textItem.level());
@@ -199,7 +175,7 @@ public class SlideShowFrame extends JFrame {
                 case ListItem listItem -> {
                     for (TextItem entry : listItem.entries()) {
                         String indent = "  ".repeat(entry.level());
-                        JLabel label = new JLabel("• " + indent + entry.text());
+                        JLabel label = new JLabel("\u2022 " + indent + entry.text());
                         Dimension size = label.getPreferredSize();
                         addComponent(label, 20, currentY, 720, size.height);
                         currentY += size.height + 4;
@@ -226,71 +202,31 @@ public class SlideShowFrame extends JFrame {
                 }
             }
         }
+        return currentY;
+    }
 
+    /** Renders a regular (non-TOC) slide: text with indentation levels, images. */
+    private void renderRegularItems(Slide slide) {
+        int currentY = renderItemList(slide.items(), 0);
         itemsPanel.setPreferredSize(new Dimension(760, Math.max(currentY, 200)));
     }
 
-    
-    /** Renders a title slide: presenter name and date as meta info. */
+    /** Renders a title slide: presenter name and date as meta info, then regular items. */
     private void renderTitleSlide(TitleSlide slide) {
         int currentY = 0;
-        // Presenter name
         if (slide.presenterName() != null && !slide.presenterName().isEmpty()) {
             JLabel label = new JLabel("Presenter: " + slide.presenterName());
             Dimension size = label.getPreferredSize();
             addComponent(label, 20, currentY, 720, size.height);
             currentY += size.height + 4;
         }
-
-        // Date
         if (slide.date() != null && !slide.date().isEmpty()) {
             JLabel label = new JLabel("Date: " + slide.date());
             Dimension size = label.getPreferredSize();
             addComponent(label, 20, currentY, 720, size.height);
             currentY += size.height + 4;
         }
-
-        // Regular items
-        for (SlideItem item : slide.items()) {
-            switch (item) {
-                case TextItem textItem -> {
-                    String indent = "  ".repeat(textItem.level());
-                    JLabel label = new JLabel(indent + textItem.text());
-                    Dimension size = label.getPreferredSize();
-                    addComponent(label, 20, currentY, 720, size.height);
-                    currentY += size.height + 4;
-                }
-                case ListItem listItem -> {
-                    for (TextItem entry : listItem.entries()) {
-                        String indent = "  ".repeat(entry.level());
-                        JLabel label = new JLabel("• " + indent + entry.text());
-                        Dimension size = label.getPreferredSize();
-                        addComponent(label, 20, currentY, 720, size.height);
-                        currentY += size.height + 4;
-                    }
-                }
-                case FigureItem figureItem -> {
-                    JLabel label;
-                    try {
-                        ImageIcon icon = new ImageIcon(figureItem.source());
-                        label = new JLabel(icon);
-                    } catch (Exception e) {
-                        label = new JLabel("Image: " + figureItem.source());
-                    }
-                    Dimension size = label.getPreferredSize();
-                    addComponent(label, 20, currentY, 720, size.height);
-                    currentY += size.height + 4;
-                }
-                case PositionItem positionItem -> {
-                    String indent = "  ".repeat(positionItem.level());
-                    JLabel label = new JLabel(indent + positionItem.text());
-                    Dimension size = label.getPreferredSize();
-                    addComponent(label, positionItem.x(), positionItem.y(), 720, size.height);
-                    currentY = Math.max(currentY, positionItem.y() + size.height + 4);
-                }
-            }
-        }
-
+        currentY = renderItemList(slide.items(), currentY);
         itemsPanel.setPreferredSize(new Dimension(760, Math.max(currentY, 200)));
     }
 

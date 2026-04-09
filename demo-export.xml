@@ -8,7 +8,6 @@
     <date>2026-04-07</date>
   </slide>
   <slide>
-    <title>TOC Marker</title>
     <toc/>
   </slide>
   <slide>
@@ -71,7 +70,6 @@ controllers</item>
     <item kind="text" level="2">TOC marker slides worden niet meegeteld</item>
   </slide>
   <slide>
-    <title>TOC Marker</title>
     <toc/>
   </slide>
   <slide>
@@ -127,5 +125,6 @@ Value Object: Subject, TocEntry</item>
     <item kind="text" level="1">Bedankt voor het bekijken van deze demo!</item>
     <item kind="text" level="2">JabberPoint — Design for Change, IM0603</item>
     <item kind="text" level="2">Open Universiteit, 2026</item>
+    <item kind="image">OU_Logo.png</item>
   </slide>
 </presentation>

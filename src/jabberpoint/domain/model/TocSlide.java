@@ -27,7 +27,7 @@ public final class TocSlide implements Slide {
 		this.entries = Collections.unmodifiableList(new ArrayList<>(entries));
 		List<SlideItem> rendered = new ArrayList<>();
 		for (TocEntry entry : entries) {
-			rendered.add(new TextItem(0, entry.slideNumber() + ". " + entry.subject().value()));
+			rendered.add(new TextItem(1, entry.slideNumber() + ". " + entry.subject().value()));
 		}
 		this.items = Collections.unmodifiableList(rendered);
 	}

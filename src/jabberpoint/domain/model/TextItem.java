@@ -11,10 +11,9 @@ public final class TextItem implements SlideItem {
 			throw new IllegalArgumentException("Level must be zero or greater");
 		}
 		this.level = level;
+		// Trimmed but allowed to be empty: whitespace-only items act as vertical spacers,
+		// matching the original JabberPoint behaviour (e.g. slide.append(1, " ")).
 		this.text = Objects.requireNonNull(text, "text must not be null").trim();
-		if (this.text.isEmpty()) {
-			throw new IllegalArgumentException("Text item text cannot be empty");
-		}
 	}
 
 	public int level() {

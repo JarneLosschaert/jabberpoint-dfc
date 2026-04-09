@@ -68,8 +68,21 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
             presentation.appendChild(showTitle);
 
             for (Slide slide : slideShow.slides()) {
+                // TocSlides are generated/derived; only the TocMarkerSlide placeholder is persisted
+                if (slide instanceof TocSlide) {
+                    continue;
+                }
+
                 Element slideElement = document.createElement("slide");
 
+                // TocMarkerSlide: write only <toc/> — no title or subject
+                if (slide instanceof TocMarkerSlide) {
+                    slideElement.appendChild(document.createElement("toc"));
+                    presentation.appendChild(slideElement);
+                    continue;
+                }
+
+                // Regular slides: write title, optional subject, and type-specific content
                 Element title = document.createElement("title");
                 title.setTextContent(slide.title());
                 slideElement.appendChild(title);
@@ -82,8 +95,8 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                 }
 
                 /*
-                 * Use an exhaustive switch so that adding a new Slide subtype produces a
-                 * compile error here, forcing the author to decide how it should be persisted.
+                 * Exhaustive switch: adding a new Slide subtype produces a compile error,
+                 * forcing the author to decide how it should be persisted.
                  */
                 switch (slide) {
                     case TitleSlide ts -> {
@@ -108,13 +121,8 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                         slideElement.setAttribute("kind", "special");
                         appendItems(slideElement, ss.items(), document);
                     }
-                    case TocMarkerSlide ignored -> {
-                        Element toc = document.createElement("toc");
-                        slideElement.appendChild(toc);
-                    }
-                    case TocSlide ignored -> {
-                        // Generated; not persisted — the TOC is derived from the source slides
-                    }
+                    case TocMarkerSlide ignored -> {} // handled above via early continue
+                    case TocSlide ignored -> {}       // handled above via early continue
                 }
 
                 presentation.appendChild(slideElement);

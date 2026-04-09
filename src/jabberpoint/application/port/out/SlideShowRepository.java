@@ -9,8 +9,7 @@ import jabberpoint.domain.model.SlideShow;
  * an infrastructure concern, as it may involve reading from files, databases,
  * or other external sources. The application layer depends on this interface
  * to obtain slide shows without being coupled to the underlying infrastructure.
- * Default: InMemorySlideShowRepository, which provides a hardcoded demo slide
- * show for testing and development purposes (for now).
+ * Default: XmlSlideShowRepository, which reads slide shows from XML files.
  */
 public interface SlideShowRepository {
     Optional<SlideShow> findById(String slideShowId);

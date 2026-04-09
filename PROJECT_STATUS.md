@@ -1,6 +1,6 @@
 # Project Status — What's Done, What's Left, What Was Unnecessary
 
-**Last updated:** 2026-04-07
+**Last updated:** 2026-04-09
 
 ---
 
@@ -53,7 +53,7 @@
 ### Demo & Test Data
 | Item | Status | Files |
 |------|--------|-------|
-| Comprehensive demo XML (16 slides, multiple subjects, 2 TOC markers, repeated subjects, missing subjects, all item types) | ✅ Done | `demo.xml` |
+| Comprehensive demo XML (16 slides, multiple subjects, 2 TOC markers, repeated subjects, missing subjects, all item types, OU logo on final slide) | ✅ Done | `demo.xml` |
 
 ### Ubiquitous Language
 | Item | Status | Files |
@@ -73,6 +73,7 @@
 | `demo-export.xml` added to `.gitignore` | ✅ Done | Auto-generated on startup |
 | `bin/` in `.gitignore` (not tracked by git) | ✅ Done | Build output only |
 | `.classpath` and `.project` kept in git (not in `.gitignore`) | ✅ Done | Required for Eclipse submission |
+| OU logo (`OU_Logo.jpg`) added to final slide in `demo.xml` as `FigureItem` | ✅ Done | Image stays at project root |
 
 ---
 
@@ -158,26 +159,26 @@ Items that were in the codebase but weren't necessary. Dead code has been **remo
 
 ### 🐛 Bugs
 
-| # | Issue | Where | Impact |
-|---|-------|--------|--------|
-| 1 | **`XmlSlideShowPersister` always writes a `<slide>` element, even for `TocSlide`** — The `slideElement` and its `<title>` are created and appended *before* the `switch`. The `TocSlide` branch does nothing inside the switch, but `presentation.appendChild(slideElement)` still runs for every slide. If the post-TOC slide show is ever saved, each `TocSlide` becomes a `<slide><title>Table of Contents</title></slide>` ghost entry in the XML. Currently `App.java` saves the *pre-TOC* slideshow so this is latent, but it is a correctness bug. | `XmlSlideShowPersister.save()` | Medium — silent data corruption on unexpected save path |
-| 2 | **`TocMarkerSlide` writes its synthetic title to XML** — Same root cause as above: the title `"TOC Marker"` is written before the switch, so every persisted marker becomes `<slide><title>TOC Marker</title><toc/></slide>`. On reload the `<toc>` child is detected first and the title is discarded (no functional impact), but the round-tripped XML differs from the original — `demo.xml` declares a marker as `<slide><toc/></slide>` with no title. | `XmlSlideShowPersister.save()` | Low — noisy round-trip XML but no runtime failure |
-| 3 | **Active-subject highlighting uses fragile string-suffix matching** — `textItem.text().endsWith(activeSubject.value())` works by accident because entries are formatted as `"N. SubjectName"`. It would break if a subject name is a trailing substring of another (e.g. `"Architecture"` vs `"Clean Architecture"`). The `TocSlide.entries()` method exists precisely to allow proper `Subject.equals()` comparison, but the UI never calls it. | `SlideShowFrame.renderTocItems()` | Low — wrong entry highlighted for edge-case subject names |
-| 4 | **`TextItem` rejects whitespace-only text** — The constructor trims and then throws on empty text. The original JabberPoint used space-only items (`" "`) as vertical spacers (see `DemoPresentation.java` and `test.xml`). Loading the original `test.xml` into the new code would crash on `<item kind="text" level="1"> </item>`. | `TextItem` constructor | Medium — breaks backward compatibility with original XML files |
+| # | Issue | Where | Impact | Status |
+|---|-------|--------|--------|--------|
+| 1 | **`XmlSlideShowPersister` always wrote a `<slide>` element for `TocSlide`** — ghost entries on unexpected save. | `XmlSlideShowPersister.save()` | Medium | ✅ **Fixed** — early `continue` skips `TocSlide` entirely before creating `slideElement`. |
+| 2 | **`TocMarkerSlide` leaked its synthetic title `"TOC Marker"` to XML** — noisy round-trip XML. | `XmlSlideShowPersister.save()` | Low | ✅ **Fixed** — early `continue` after writing a minimal `<slide><toc/></slide>` with no title or subject. |
+| 3 | **Active-subject highlighting used fragile string-suffix matching** — `endsWith(activeSubject.value())` would fail if one subject name is a suffix of another. | `SlideShowFrame.renderTocItems()` | Low | ✅ **Fixed** — `renderTocItems` now iterates `slide.entries()` directly and uses `entry.subject().equals(activeSubject)`. |
+| 4 | **`TextItem` rejected whitespace-only text** — broke backward compatibility with original XML spacer items (`<item kind="text" level="1"> </item>`). | `TextItem` constructor | Medium | ✅ **Fixed** — removed the `isEmpty` guard; whitespace-only text is now allowed as a vertical spacer (text stored after trim, which results in empty string for spacers). |
 
 ---
 
 ### ⚠️ Design Issues & Things to Do Better
 
-| # | Issue | Where | Recommendation |
-|---|-------|--------|----------------|
-| 5 | **`SlideItem.renderText()` is dead code** — The UI never calls this method; it pattern-matches directly on the sealed subtypes. Either remove the method or use it (e.g. for export, accessibility, or logging). Having an interface method that is never called is confusing. | `SlideItem` interface + all implementations | Remove `renderText()` or wire it into a use case (e.g. a plain-text export). |
-| 6 | **`TocSlide.entries()` is ignored in rendering** — The UI iterates over `slide.items()` (raw `TextItem` strings) instead of `slide.entries()` (typed `TocEntry` list). The `entries()` method was added to enable precise `Subject.equals()` comparison during rendering (see bug 3) but is unused. | `SlideShowFrame.renderTocItems()` | Iterate over `entries()` directly and compare `entry.subject().equals(activeSubject)` instead of the string-suffix hack. |
-| 7 | **`renderRegularItems` code is repeated three times** — Identical rendering loops appear in `renderRegularItems`, `renderTitleSlide`, and `renderTocItems`. Extract a shared helper or render items through the shared `renderRegularItems` + let each slide type's dedicated render method add only its extra fields. | `SlideShowFrame` | Extract a `renderItemList(List<SlideItem>)` helper and call it from all three render methods. |
-| 8 | **`ListItem` XML format is ambiguous** — In `demo.xml` the list content is a single long text blob joined with spaces (`"Domeinlaag: ... Applicatielaag: ..."`). `parseListItem` splits on newlines, so the whole blob becomes one single-entry list. The intent was multiple bullet points, but the XML format and parser disagree. Either use newline-separated entries in XML (one per line) or add a dedicated `<entry>` child element. | `XmlSlideShowRepository.parseListItem()` + `demo.xml` | Fix `demo.xml` to put each entry on its own line, or redesign the XML format with explicit `<entry>` children. |
-| 9 | **No unit tests** — The domain model, `ConsecutiveSubjectTocGenerator`, `TocApplicationService`, and XML round-trip are entirely untested. The design is highly testable (sealed types, immutable objects, interfaces) — the lack of tests leaves correctness unverified and makes it harder to justify design choices in the report. | All layers | Add at minimum: tests for `ConsecutiveSubjectTocGenerator.generate()` (normal, repeated subject, unknown subject cases) and a round-trip XML test for `XmlSlideShowRepository` + `XmlSlideShowPersister`. |
-| 10 | **Stale Javadoc in `SlideShowRepository`** — The comment says `"Default: InMemorySlideShowRepository"` but that class was deleted. | `application/port/out/SlideShowRepository.java` | Update the comment to reference `XmlSlideShowRepository`. |
-| 11 | **`TocSlide` constructs `TextItem(0, ...)` for every entry** — Level 0 was the slide-title style in the original (large, red). Using level 0 for TOC entries is semantically incorrect. Level 1 (or a dedicated TOC level) would be more appropriate. Since the new UI ignores levels for TOC rendering, this has no visual effect today, but is misleading for anyone reading the domain code. | `TocSlide` constructor | Use level 1 for TOC entries, or (better) do not convert entries to `TextItem` at all in the constructor — let the UI iterate `entries()` directly (which also fixes bug 3). |
+| # | Issue | Where | Status |
+|---|-------|--------|--------|
+| 5 | **`SlideItem.renderText()` investigated** — The method is **not** dead code: `XmlSlideShowPersister.appendItems()` calls `item.renderText()` to write the text content of each `<item>` element. No action needed. | `SlideItem` interface + `XmlSlideShowPersister` | ✅ **Investigated — method is in use, kept as-is** |
+| 6 | **`TocSlide.entries()` was ignored in rendering** — UI used raw `TextItem` strings with fragile suffix matching instead of typed `TocEntry` list. | `SlideShowFrame.renderTocItems()` | ✅ **Fixed** — `renderTocItems` replaced to iterate `slide.entries()` with `Subject.equals()` comparison. |
+| 7 | **`renderRegularItems` code was repeated three times** — identical rendering loops in `renderRegularItems`, `renderTitleSlide`, and part of `renderTocItems`. | `SlideShowFrame` | ✅ **Fixed** — extracted `renderItemList(List<SlideItem>, int startY)` helper; `renderRegularItems` and `renderTitleSlide` now delegate to it. |
+| 8 | **`ListItem` XML format was ambiguous** — single-line text blob parsed as one entry instead of multiple bullets. | `demo.xml` | ✅ **Fixed** — both list items in `demo.xml` now use newline-separated entries, one bullet per line. |
+| 9 | **No unit tests** — domain model and services are untested. | All layers | ❌ **Still pending** — add tests for `ConsecutiveSubjectTocGenerator` and XML round-trip. |
+| 10 | **Stale Javadoc in `SlideShowRepository`** — referenced deleted `InMemorySlideShowRepository`. | `application/port/out/SlideShowRepository.java` | ✅ **Fixed** — updated to reference `XmlSlideShowRepository`. |
+| 11 | **`TocSlide` constructed `TextItem(0, ...)` for every entry** — level 0 is the title style; semantically wrong for TOC entries. | `TocSlide` constructor | ✅ **Fixed** — changed to `TextItem(1, ...)`. |
 
 ---
 
