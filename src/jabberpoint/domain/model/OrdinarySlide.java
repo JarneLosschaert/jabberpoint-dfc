@@ -29,6 +29,7 @@ public final class OrdinarySlide implements Slide {
 		return new Builder(title);
 	}
 
+	/** Builder pattern: constructs an {@link OrdinarySlide} with a required title; subject and items are optional. */
 	public static final class Builder {
 		private final String title;
 		private Subject subject = Subject.unknown();

@@ -2,6 +2,11 @@ package jabberpoint.domain.model;
 
 import java.util.Objects;
 
+/**
+ * Value Object pattern: represents the topic of a slide; equality is defined by value.
+ * Creation goes through named factory methods (Factory Method pattern) to enforce
+ * validation and normalisation in one place.
+ */
 public final class Subject {
 	private static final Subject UNKNOWN = new Subject("Onbekend onderwerp");
 
@@ -11,8 +16,7 @@ public final class Subject {
 		this.value = value;
 	}
 
-	// Strict factory: call sites that require a real subject should use this
-	// method (internal use).
+	/** Strict factory: throws {@link IllegalArgumentException} if {@code rawValue} is null or blank. */
 	public static Subject of(String rawValue) {
 		String normalized = normalize(rawValue);
 		if (normalized.isEmpty()) {
@@ -21,8 +25,7 @@ public final class Subject {
 		return new Subject(normalized);
 	}
 
-	// Tolerant factory: useful when reading external input where subject may be
-	// missing (external use).
+	/** Tolerant factory: returns {@link #unknown()} if {@code rawValue} is null or blank. Use when reading external data. */
 	public static Subject fromNullable(String rawValue) {
 		String normalized = normalize(rawValue);
 		if (normalized.isEmpty()) {

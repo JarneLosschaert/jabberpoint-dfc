@@ -2,7 +2,10 @@ package jabberpoint.domain.toc;
 
 import jabberpoint.domain.model.Subject;
 
-// One rendered TOC row: the first slide number where a subject block starts.
+/**
+ * Value Object pattern: one TOC row holding the slide number where a subject
+ * block starts and the subject itself.
+ */
 public record TocEntry(int slideNumber, Subject subject) {
 	public TocEntry {
 		if (slideNumber < 1) {

@@ -1,10 +1,9 @@
 package jabberpoint.domain.model;
 
 /**
- * Changed SlideItem to Sealed interface so when a new type of slide item is
- * added, it can be easily integrated and used in a switch.
+ * Sealed Interface / Exhaustive Switch pattern: a content element shown on a
+ * slide. Every switch over item types is exhaustively checked by the compiler.
  */
-
 public sealed interface SlideItem permits TextItem, FigureItem, ListItem, PositionItem {
 	String renderText();
 }

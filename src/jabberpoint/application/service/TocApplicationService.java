@@ -15,13 +15,12 @@ import jabberpoint.domain.model.TocSlide;
 import jabberpoint.domain.toc.TocEntry;
 import jabberpoint.domain.toc.TocGenerator;
 
-/*
- * Application service for building a slide show with a table of contents.
- * This service orchestrates the use case by retrieving the slide show from the
- * repository and delegating the TOC generation to a domain service. The
- * application service does not contain any business logic itself, but coordinates
- * the interaction between the domain and infrastructure layers.
-*/
+/**
+ * Strategy pattern (context) + Ports & Adapters (application service):
+ * loads the slide show via the repository port, delegates entry generation to the
+ * {@link jabberpoint.domain.toc.TocGenerator} strategy, and replaces every
+ * {@link jabberpoint.domain.model.TocMarkerSlide} with a rendered {@link jabberpoint.domain.model.TocSlide}.
+ */
 public final class TocApplicationService implements BuildSlideShowWithTocUseCase {
 
 	private static final Logger LOG = Logger.getLogger(TocApplicationService.class.getName());

@@ -30,6 +30,7 @@ public final class SpecialSlide implements Slide {
 		return new Builder(title);
 	}
 
+	/** Builder pattern: constructs a {@link SpecialSlide} with a required title; subject and items are optional. */
 	public static final class Builder {
 		private final String title;
 		private Subject subject = Subject.unknown();

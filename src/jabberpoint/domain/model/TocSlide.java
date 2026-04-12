@@ -8,8 +8,7 @@ import java.util.Objects;
 import jabberpoint.domain.toc.TocEntry;
 
 /**
- * A generated slide that lists all subject blocks of a slide show.
- * <p>
+ * Marker / Placeholder pattern (replacement): a generated slide that lists all subject blocks of a slide show.
  * Instances are never persisted to XML — the TOC is a derived view built
  * from the source slides. The application service replaces every
  * {@link TocMarkerSlide} placeholder with an instance of this class before

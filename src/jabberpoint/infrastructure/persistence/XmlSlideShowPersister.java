@@ -34,21 +34,10 @@ import jabberpoint.domain.model.TocMarkerSlide;
 import jabberpoint.domain.model.TocSlide;
 
 /**
- * Infrastructure concern: persisting a SlideShow to XML. Lives in the
- * infrastructure layer because it depends on XML libraries and file I/O, and is
- * not needed by any domain or application class.
- * Usage: called by application service when user saves a slideshow. It
- * transforms
- * the SlideShow into an XML document according to the defined contract and
- * writes
- * it to a file. The XML format is designed to be simple and stable, so that it
- * can be
- * easily parsed by the XmlSlideShowRepository when loading a slideshow, and to
- * minimize
- * the impact of future changes to the SlideShow structure on the persistence
- * format.
+ * Ports & Adapters (adapter): serialises a
+ * {@link jabberpoint.domain.model.SlideShow} to an XML file. Implements the
+ * {@link jabberpoint.application.port.out.SlideShowPersister} outbound port.
  */
-
 public final class XmlSlideShowPersister implements SlideShowPersister {
 
     private static final Logger LOG = Logger.getLogger(XmlSlideShowPersister.class.getName());
@@ -68,7 +57,8 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
             presentation.appendChild(showTitle);
 
             for (Slide slide : slideShow.slides()) {
-                // TocSlides are generated/derived; only the TocMarkerSlide placeholder is persisted
+                // TocSlides are generated/derived; only the TocMarkerSlide placeholder is
+                // persisted
                 if (slide instanceof TocSlide) {
                     continue;
                 }
@@ -121,8 +111,10 @@ public final class XmlSlideShowPersister implements SlideShowPersister {
                         slideElement.setAttribute("kind", "special");
                         appendItems(slideElement, ss.items(), document);
                     }
-                    case TocMarkerSlide ignored -> {} // handled above via early continue
-                    case TocSlide ignored -> {}       // handled above via early continue
+                    case TocMarkerSlide ignored -> {
+                    } // handled above via early continue
+                    case TocSlide ignored -> {
+                    } // handled above via early continue
                 }
 
                 presentation.appendChild(slideElement);

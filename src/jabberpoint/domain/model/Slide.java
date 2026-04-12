@@ -3,8 +3,8 @@ package jabberpoint.domain.model;
 import java.util.List;
 
 /**
- * A visual sheet in a slide show. Sealed so that exhaustive switch expressions
- * can be written over all known slide types without a catch-all.
+ * Sealed Interface / Exhaustive Switch pattern: a visual sheet in a slide show.
+ * Sealed so that every switch over slide types is exhaustively checked by the compiler.
  * <p>
  * Known subtypes:
  * <ul>

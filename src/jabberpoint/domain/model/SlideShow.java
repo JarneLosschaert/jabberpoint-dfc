@@ -5,6 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Immutable State Machine pattern: an immutable aggregate representing an ordered sequence of
+ * slides with a lifecycle state. Every navigation method validates the current state and returns
+ * a new instance; no field is mutated after construction.
+ */
 public final class SlideShow {
 	private final String id;
 	private final String title;
@@ -36,6 +41,7 @@ public final class SlideShow {
 		return new Builder(id, title);
 	}
 
+	/** Builder pattern: constructs a {@link SlideShow} with a required id and title; slide list is optional. */
 	public static final class Builder {
 		private final String id;
 		private final String title;
@@ -175,13 +181,7 @@ public final class SlideShow {
 		return new SlideShow(id, title, slides, state, zeroBasedIndex);
 	}
 
-	/**
-	 * Returns a new SlideShow with the same identity, title, and state but a
-	 * different slide list. Use this when deriving a modified version of the slide
-	 * show (e.g. with TOC slides inserted), so that callers never need to repeat
-	 * the other fields and remain correct if new fields are added later.
-	 * Resets currentSlideIndex to -1 to ensure consistency with the new slide list.
-	 */
+	/** Returns a copy of this slide show with a different slide list, reset to NOT_STARTED. */
 	public SlideShow withSlides(List<Slide> newSlides) {
 		return new SlideShow(id, title, newSlides, SlideShowState.NOT_STARTED, -1);
 	}

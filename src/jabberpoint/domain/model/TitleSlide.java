@@ -35,6 +35,7 @@ public final class TitleSlide implements Slide {
 		return new Builder(title);
 	}
 
+	/** Builder pattern: constructs a {@link TitleSlide} with a required title; all other fields are optional. */
 	public static final class Builder {
 		private final String title;
 		private Subject subject = Subject.unknown();

@@ -10,6 +10,14 @@ import jabberpoint.domain.model.Subject;
 import jabberpoint.domain.model.TocMarkerSlide;
 import jabberpoint.domain.model.TocSlide;
 
+/**
+ * Strategy pattern (concrete strategy): groups consecutive slides with the same subject
+ * into one TOC entry. A subject that reappears after a different subject
+ * produces a new entry.
+ * {@link jabberpoint.domain.model.TocMarkerSlide} and
+ * {@link jabberpoint.domain.model.TocSlide} are skipped and never produce
+ * entries.
+ */
 public final class ConsecutiveSubjectTocGenerator implements TocGenerator {
 	@Override
 	public List<TocEntry> generate(List<Slide> orderedSlides) {

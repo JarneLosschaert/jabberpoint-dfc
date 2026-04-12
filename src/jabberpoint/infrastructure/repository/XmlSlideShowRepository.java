@@ -31,17 +31,10 @@ import jabberpoint.domain.model.TitleSlide;
 import jabberpoint.domain.model.TocMarkerSlide;
 
 /**
- * Infrastructure concern: loading a SlideShow from XML. Lives in the
- * infrastructure layer because it depends on XML libraries and file I/O, and is
- * not needed by any domain or application class.
- * Usage: called by application service when user opens a slideshow. It looks
- * for an XML file with the given ID, parses it according to the defined
- * contract, and transforms it into a SlideShow object. The XML format is
- * designed to be simple and stable, so that it can be easily parsed by this
- * repository, and to minimize the impact of future changes to the SlideShow
- * structure on the persistence format.
+ * Repository + Ports & Adapters (adapter): loads a
+ * {@link jabberpoint.domain.model.SlideShow} from an XML file. Implements the
+ * {@link jabberpoint.application.port.out.SlideShowRepository} outbound port.
  */
-
 public final class XmlSlideShowRepository implements SlideShowRepository {
 
     private static final Logger LOG = Logger.getLogger(XmlSlideShowRepository.class.getName());
@@ -64,7 +57,8 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
             doc.getDocumentElement().normalize();
 
             SlideShow slideShow = parseSlideShow(doc, slideShowId);
-            LOG.info("Loaded slide show '" + slideShowId + "' with " + slideShow.slides().size() + " slides from " + fileName);
+            LOG.info("Loaded slide show '" + slideShowId + "' with " + slideShow.slides().size() + " slides from "
+                    + fileName);
             return Optional.of(slideShow);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new RuntimeException("Failed to parse XML file: " + fileName, e);
@@ -115,14 +109,14 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         String kind = slideElement.getAttribute("kind");
 
         return switch (kind) {
-            case "title"   -> TitleSlide.builder(title)
+            case "title" -> TitleSlide.builder(title)
                     .subject(subject)
                     .items(items)
                     .presenterName(parsePresenterName(slideElement))
                     .date(parseDate(slideElement))
                     .build();
             case "special" -> new SpecialSlide(title, subject, items);
-            default        -> new OrdinarySlide(title, subject, items); // "ordinary" or absent
+            default -> new OrdinarySlide(title, subject, items); // "ordinary" or absent
         };
     }
 
@@ -236,7 +230,8 @@ public final class XmlSlideShowRepository implements SlideShowRepository {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            LOG.warning("Invalid position value '" + value + "' for attribute '" + attributeName + "'; defaulting to 0");
+            LOG.warning(
+                    "Invalid position value '" + value + "' for attribute '" + attributeName + "'; defaulting to 0");
             return 0;
         }
     }

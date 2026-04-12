@@ -3,8 +3,8 @@ package jabberpoint.application.port.out;
 import jabberpoint.domain.model.SlideShow;
 
 /**
- * Responsibility: persist slide shows into external representation (XML).
- * Dependency direction: infrastructure adapters implement this outbound port.
+ * Ports & Adapters (outbound port): contract for persisting a slide show to an
+ * external representation. Infrastructure adapters implement this interface.
  */
 public interface SlideShowPersister {
     void save(SlideShow slideShow, String fileName);

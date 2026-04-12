@@ -39,6 +39,11 @@ import jabberpoint.domain.model.TocMarkerSlide;
 import jabberpoint.domain.model.TocSlide;
 import jabberpoint.domain.toc.TocEntry;
 
+/**
+ * Immutable State Machine (consumer): Swing UI for presenting a slide show.
+ * Replaces its {@code SlideShow} reference on each navigation call and uses an
+ * exhaustive switch over the sealed {@code Slide} type for rendering.
+ */
 public class SlideShowFrame extends JFrame {
     private static final Color ACTIVE_SECTION_COLOR = new Color(0, 100, 200);
     private static final Color INACTIVE_SECTION_COLOR = Color.DARK_GRAY;
@@ -105,11 +110,12 @@ public class SlideShowFrame extends JFrame {
             itemsPanel.removeAll();
 
             switch (slide) {
-                case TocSlide toc   -> renderTocItems(toc, findActiveSubject(index));
-                case TitleSlide ts  -> renderTitleSlide(ts);
+                case TocSlide toc -> renderTocItems(toc, findActiveSubject(index));
+                case TitleSlide ts -> renderTitleSlide(ts);
                 case OrdinarySlide os -> renderRegularItems(os);
-                case SpecialSlide ss  -> renderRegularItems(ss);
-                case TocMarkerSlide ignored -> { /* placeholder — should have been replaced before display */ }
+                case SpecialSlide ss -> renderRegularItems(ss);
+                case TocMarkerSlide ignored -> {
+                    /* placeholder — should have been replaced before display */ }
             }
 
             slideNumberLabel.setText("Slide " + (index + 1) + " of " + slideShow.slides().size());
@@ -160,7 +166,10 @@ public class SlideShowFrame extends JFrame {
         itemsPanel.setPreferredSize(new Dimension(760, Math.max(currentY, 200)));
     }
 
-    /** Renders a list of slide items starting at the given Y offset; returns the new Y offset. */
+    /**
+     * Renders a list of slide items starting at the given Y offset; returns the new
+     * Y offset.
+     */
     private int renderItemList(List<SlideItem> items, int startY) {
         int currentY = startY;
         for (SlideItem item : items) {
@@ -211,7 +220,10 @@ public class SlideShowFrame extends JFrame {
         itemsPanel.setPreferredSize(new Dimension(760, Math.max(currentY, 200)));
     }
 
-    /** Renders a title slide: presenter name and date as meta info, then regular items. */
+    /**
+     * Renders a title slide: presenter name and date as meta info, then regular
+     * items.
+     */
     private void renderTitleSlide(TitleSlide slide) {
         int currentY = 0;
         if (slide.presenterName() != null && !slide.presenterName().isEmpty()) {

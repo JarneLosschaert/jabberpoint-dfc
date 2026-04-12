@@ -14,6 +14,10 @@ import jabberpoint.infrastructure.persistence.XmlSlideShowPersister;
 import jabberpoint.infrastructure.repository.XmlSlideShowRepository;
 import jabberpoint.ui.view.SlideShowFrame;
 
+/**
+ * Ports & Adapters (composition root). Wires all ports and adapters together
+ * and launches the UI.
+ */
 public final class App {
 
 	private static final Logger LOG = Logger.getLogger(App.class.getName());

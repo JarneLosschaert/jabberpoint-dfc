@@ -5,11 +5,8 @@ import java.util.Optional;
 import jabberpoint.domain.model.SlideShow;
 
 /**
- * Interface for retrieving slide shows. The implementation of this interface is
- * an infrastructure concern, as it may involve reading from files, databases,
- * or other external sources. The application layer depends on this interface
- * to obtain slide shows without being coupled to the underlying infrastructure.
- * Default: XmlSlideShowRepository, which reads slide shows from XML files.
+ * Repository + Ports & Adapters (outbound port): abstraction over slide show
+ * retrieval. Infrastructure adapters implement this interface.
  */
 public interface SlideShowRepository {
     Optional<SlideShow> findById(String slideShowId);

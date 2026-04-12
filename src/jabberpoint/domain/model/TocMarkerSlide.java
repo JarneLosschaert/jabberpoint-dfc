@@ -3,16 +3,12 @@ package jabberpoint.domain.model;
 import java.util.List;
 
 /**
- * Marks the position in a slide sequence where the application should insert
- * a generated TocSlide
- * Why this type is needed:the presenter decides where in the
- * slide sequence the table of contents appears. That position is expressed in
- * the source XML as a <toc/> child element inside a <slide>.
- * During loading the parser produces a TocMarkerSlide to preserve that
- * positional intent inside the domain model. Before the presentation starts,
- * the application service replaces every marker with a fully rendered
- * This class has no configurable state: its only role is structural
- * (marking position), so no constructor arguments or builder are needed.
+ * Marker / Placeholder pattern (marker): marks the position in the slide sequence where a TOC slide should be inserted.
+ * The presenter declares this position in the source XML as a {@code <toc/>} element.
+ * During loading, the parser produces a {@code TocMarkerSlide} to preserve that positional
+ * intent inside the domain model. Before the presentation starts, {@code TocApplicationService}
+ * replaces every marker with a fully rendered {@link TocSlide}.
+ * This class carries no state: its only role is to mark a position in the slide sequence.
  */
 public final class TocMarkerSlide implements Slide {
 	private static final String MARKER_TITLE = "TOC Marker";
